@@ -8,7 +8,7 @@ bool CDGI::setResolution(uint vRes) {
 	return true;
 }
 
-bool CDGI::run(const PC_t::Ptr vInput, PC_t::Ptr voOutput) {
+bool CDGI::run(const PC_t::Ptr vInput, PC_t::Ptr& voOutput) {
 	_EARLY_RETURN(!isPointCloudValid(vInput), "DGI run error: input is not valid.", false);
 
 	core::CHeightMapGenerator HMGenerator;
@@ -30,10 +30,13 @@ bool CDGI::run(const PC_t::Ptr vInput, PC_t::Ptr voOutput) {
 	ptr<core::CHeightMap> pHeightFilled = __solveEquations(pHeight, pGradientFilled, pGog);
 	_EARLY_RETURN(!pHeightFilled->isValid(), "DGI run error: height filled map is not valid.", false);
 
-	voOutput = __genePointCloud(pHeight, pHeightFilled, 10);
+	voOutput = __genePointCloud(pHeight, pHeightFilled, core::PointCloudUtil::calcAABB(vInput), 10);
 	_EARLY_RETURN(!isPointCloudValid(voOutput), "DGI run error: output is not valid.", false);
 
-	return false;
+	core::CMapWrapper::saveMapToLocal(pHeight, "Images/Input.png");
+	core::CMapWrapper::saveMapToLocal(pHeightFilled, "Images/Output.png");
+
+	return true;
 }
 
 ptr<core::CGradientMap> CDGI::__inpaintImage(const ptr<core::CGradientMap> vRaw, const ptr<core::CMaskMap> vMask) {
@@ -80,13 +83,18 @@ ptr<core::CHeightMap> CDGI::__solveEquations(const ptr<core::CHeightMap> vInput,
 	return pFilled;
 }
 
-PC_t::Ptr CDGI::__genePointCloud(const ptr<core::CHeightMap> vInput, const ptr<core::CHeightMap> vFilled, int vPointNumberPerPixel) {
+PC_t::Ptr CDGI::__genePointCloud(const ptr<core::CHeightMap> vInput, const ptr<core::CHeightMap> vFilled, const core::SAABB& vBox, int vPointNumberPerPixel) {
 	
-	core::CHeightMap2PCMapper Mapper;
-	PC_t::Ptr pNew = Mapper.map2PC(vInput, vFilled, vPointNumberPerPixel);
-	_EARLY_RETURN(!isPointCloudValid(pNew), "DGI run error: new point cloud is invalid.", pNew);
+	core::CHeightMapSampler Sampler;
+	std::vector<vec3f> Samples;
+	bool r = Sampler.sample(vInput, vFilled, vPointNumberPerPixel, Samples);
+	_EARLY_RETURN(!r, "DGI run error: sample fails.", nullptr);
 
-	return pNew;
+	core::CPCMapper Mapper;
+	PC_t::Ptr pCloud = Mapper.map(vBox, Samples);
+	_EARLY_RETURN(!isPointCloudValid(pCloud), "DGI run error: new point cloud is invalid.", nullptr);
+
+	return pCloud;
 }
 
 

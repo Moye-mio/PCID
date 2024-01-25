@@ -37,6 +37,9 @@
     <Filter Include="Map\Wrapper">
       <UniqueIdentifier>{ebf4e153-739e-4be0-8af3-325ca39a0eea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PointCloud\Mapper">
+      <UniqueIdentifier>{b62aa273-9505-4de0-95bb-893dc170bb30}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HeightMap.cpp">
@@ -66,8 +69,11 @@
     <ClCompile Include="PointCloudUtil.cpp">
       <Filter>PointCloud\Util</Filter>
     </ClCompile>
-    <ClCompile Include="HeightMap2PCMapper.cpp">
-      <Filter>PointCloud\HeightMap</Filter>
+    <ClCompile Include="HeightMapSampler.cpp">
+      <Filter>Map\HeightMap</Filter>
+    </ClCompile>
+    <ClCompile Include="PCMapper.cpp">
+      <Filter>PointCloud\Mapper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -113,8 +119,11 @@
     <ClInclude Include="EigenUtil.h">
       <Filter>Solver</Filter>
     </ClInclude>
-    <ClInclude Include="HeightMap2PCMapper.h">
-      <Filter>PointCloud\HeightMap</Filter>
+    <ClInclude Include="HeightMapSampler.h">
+      <Filter>Map\HeightMap</Filter>
+    </ClInclude>
+    <ClInclude Include="PCMapper.h">
+      <Filter>PointCloud\Mapper</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

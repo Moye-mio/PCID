@@ -17,8 +17,21 @@ public:
 	template <>
 	static cv::Mat castMap2CVMat<std::uint8_t>(const std::shared_ptr<CMap<std::uint8_t>> vMap);
 
-	template<typename T>
-	static bool saveMapToLocal(const ptr<CMap<T>> m);
+	static void saveMapToLocal(const ptr<CHeightMap> m, const std::string& vPath) {
+		_EARLY_RETURN(m->isValid() == false, "save map error: map is invalid.", );
+
+		cv::Mat Image(m->getWidth(), m->getHeight(), CV_32FC1);
+		for (int i = 0; i < Image.rows; i++) {
+			for (int k = 0; k < Image.cols; k++) {
+				Image.at<float>(i, k) = m->getValue(i, k);
+			}
+		}
+
+		cv::Mat SaveImage(Image.size(), CV_8UC1);
+		float Scale = 255.0f / (m->getMax() - m->getMin());
+		Image.convertTo(SaveImage, CV_8UC1, Scale, -m->getMin() * Scale);
+		cv::imwrite(vPath, SaveImage);
+	}
 
 	static std::variant<std::shared_ptr<CHeightMap>, std::shared_ptr<CGradientMap>, std::shared_ptr<CMaskMap>> castCVMat2Map(const cv::Mat& vImage) {
 		switch (vImage.type()) {
@@ -115,16 +128,6 @@ inline cv::Mat CMapWrapper::castMap2CVMat<std::uint8_t>(const std::shared_ptr<CM
 	return Image;
 }
 
-template<typename T>
-inline bool CMapWrapper::saveMapToLocal(const ptr<CMap<T>> m) {
-	_EARLY_RETURN(m->isValid() == false, "save map error: map is invalid.", nullptr);
-
-	cv::Mat Image(m->getWidth(), m->getHeight(), CV_8UC1);
-	for (int i = 0; i < Image.rows; i++) {
-
-	}
-
-}
 
 }
 

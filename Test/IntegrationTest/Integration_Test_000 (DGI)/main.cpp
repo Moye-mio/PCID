@@ -28,7 +28,6 @@
 #include "GradientMap.h"
 #include "MaskMap.h"
 #include "HeightMapGenerator.h"
-#include "HeightMap2PCMapper.h"
 #include "MapWrapper.h"
 #include "SolverBuilder.h"
 #include "SparseLinearSolver.h"
@@ -43,7 +42,7 @@
 
 
 int main() {
-	int Resolution = 256;
+	int Resolution = 100;
 	PC_t::Ptr pInput(new PC_t), pOutput(new PC_t);
 	const std::string LoadPath = MODEL_DIR + std::string("hole/1.ply");
 	const std::string SavePath = "Result/output.ply";

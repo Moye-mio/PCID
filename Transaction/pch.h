@@ -29,16 +29,19 @@
 #include "PCLoader.h"
 
 /* CORE */
+#include "AABB.h"
 #include "MapUtil.h"
 #include "HeightMap.h"
 #include "GradientMap.h"
 #include "MaskMap.h"
 #include "HeightMapGenerator.h"
-#include "HeightMap2PCMapper.h"
+#include "HeightMapSampler.h"
 #include "MapWrapper.h"
+#include "PCMapper.h"
 #include "SolverBuilder.h"
 #include "SparseLinearSolver.h"
 #include "EigenUtil.h"
+#include "PointCloudUtil.h"
 
 /* PATCHMATCH */
 #include "ImageInpainting.h"
