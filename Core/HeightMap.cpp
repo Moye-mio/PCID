@@ -31,6 +31,28 @@ float CHeightMap::getMin() const {
 	return m_Data[Id.first][Id.second];
 }
 
+float CHeightMap::bisample(float i, float k) {
+	if (i > m_Width - 1 || k > m_Height - 1 || i < 0 || k < 0) {
+		return m_Empty;
+	}
+
+	int x2 = (int)(std::roundf(i));
+	int y2 = (int)(std::roundf(k));
+	int x1 = (x2 == 0) ? 0 : x2 - 1;
+	int y1 = (y2 == 0) ? 0 : y2 - 1;
+	x2 = (x2 == m_Width) ? x2 - 1 : x2;
+	y2 = (y2 == m_Height) ? y2 - 1 : y2;
+
+	float v1 = m_Data[x1][y1];
+	float v2 = m_Data[x2][y1];
+	float v3 = m_Data[x1][y2];
+	float v4 = m_Data[x2][y2];
+	float dx = std::roundf(i) + 0.5f;
+	float dy = std::roundf(k) + 0.5f;
+
+	float r = MathUtil::bilinearInterpolate(v1, v2, v3, v4, 1.0f - (dx - i), 1.0f - (dy - k));
+}
+
 std::pair<uint, uint> CHeightMap::getMaxId() const {
 	float Tmax = -FLT_MAX;
 	int m = 0, n = 0;

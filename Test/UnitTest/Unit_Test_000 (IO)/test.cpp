@@ -6,7 +6,6 @@ TEST(IO, Loader) {
 	PC_t::Ptr pCloud(new PC_t);
 	io::CPCLoader Loader;
 	pCloud = Loader.loadDataFromFile(Path);
-
 	EXPECT_EQ(pCloud->size(), 16);
 }
 

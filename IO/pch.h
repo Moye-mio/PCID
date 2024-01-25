@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <cstdlib>
+#include <variant>
 
 /* BOOST */
 #include <boost/format.hpp>

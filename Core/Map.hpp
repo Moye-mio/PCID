@@ -115,7 +115,8 @@ inline void CMap<T>::setEmptyValue(T v) {
 
 template<typename T>
 inline bool CMap<T>::setValue(uint i, uint k, T v) {
-	_EARLY_RETURN(i > m_Width || k > m_Height, "map set value index invalid.", false);
+	_ASSERTE(i < m_Width || k < m_Height);
+	_EARLY_RETURN(i >= m_Width || k >= m_Height, "map set value index invalid.", false);
 
 	m_Data[i][k] = v;
 	return true;
@@ -173,7 +174,7 @@ inline bool CMap<T>::isValid() const {
 
 template<typename T>
 inline bool CMap<T>::isValid(uint i, uint k) const {
-	_EARLY_RETURN(i > m_Width || k > m_Height, "map index invalid: i or k out of scale.", false);
+	_EARLY_RETURN(i >= m_Width || k >= m_Height, "map index invalid: i or k out of scale.", false);
 
 	if (MathUtil::isNan(m_Data[i][k])) {
 		return false;
@@ -184,7 +185,7 @@ inline bool CMap<T>::isValid(uint i, uint k) const {
 
 template<typename T>
 inline bool CMap<T>::isEmpty(uint i, uint k) const {
-	_EARLY_RETURN(i > m_Width || k > m_Height, "map index invalid: i or k out of scale.", false);
+	_EARLY_RETURN(i >= m_Width || k >= m_Height, "map index invalid: i or k out of scale.", false);
 
 	if (isValid(i, k) && MathUtil::isEqual(m_Data[i][k], m_Empty)) {
 		return true;

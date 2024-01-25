@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{3fa44782-bcc0-4834-aee2-4a5dfb2a6cb0}</ProjectGuid>
-    <RootNamespace>Core</RootNamespace>
+    <ProjectGuid>{aa1d47e5-1df5-49a2-a9f5-61a055a6489a}</ProjectGuid>
+    <RootNamespace>IntegrationTest000DGI</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -40,13 +40,13 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -102,13 +102,10 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;X64;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;NOMINMAX;MODEL_DIR=R"(C:\Users\Moye\source\repos\Model\Experiment\)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Common;$(SolutionDir)\Core;$(SolutionDir)\IO;$(SolutionDir)\Transaction;$(SolutionDir)\Alg;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -121,12 +118,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,40 +129,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.vcxproj">
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Alg\Alg.vcxproj">
+      <Project>{f772f1e4-d33f-422c-a14a-fbc4beb9db6b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\Common.vcxproj">
       <Project>{73bfb3ec-8888-44a7-a0a5-68b8df5262ff}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="AABB.h" />
-    <ClInclude Include="framework.h" />
-    <ClInclude Include="GradientMap.h" />
-    <ClInclude Include="HeightMap.h" />
-    <ClInclude Include="HeightMap2PCMapper.h" />
-    <ClInclude Include="HeightMapGenerator.h" />
-    <ClInclude Include="Map.hpp" />
-    <ClInclude Include="MapUtil.h" />
-    <ClInclude Include="MapWrapper.h" />
-    <ClInclude Include="MaskMap.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="PointCloudUtil.h" />
-    <ClInclude Include="SolverBuilder.h" />
-    <ClInclude Include="EigenUtil.h" />
-    <ClInclude Include="SparseLinearSolver.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="GradientMap.cpp" />
-    <ClCompile Include="HeightMap.cpp" />
-    <ClCompile Include="HeightMap2PCMapper.cpp" />
-    <ClCompile Include="HeightMapGenerator.cpp" />
-    <ClCompile Include="MapUtil.cpp" />
-    <ClCompile Include="MaskMap.cpp" />
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="PointCloudUtil.cpp" />
-    <ClCompile Include="SolverBuilder.cpp" />
-    <ClCompile Include="SparseLinearSolver.cpp" />
+    <ProjectReference Include="..\..\..\Core\Core.vcxproj">
+      <Project>{3fa44782-bcc0-4834-aee2-4a5dfb2a6cb0}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\IO\IO.vcxproj">
+      <Project>{d3aa80ca-91c1-4e86-ae8e-44af62d5441c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Transaction\Transaction.vcxproj">
+      <Project>{7e1f5df0-2717-4507-995e-0130e2a3b953}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

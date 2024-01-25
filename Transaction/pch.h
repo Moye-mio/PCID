@@ -17,6 +17,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <cstdlib>
+#include <variant>
 
 /* CV */
 #include <opencv2/opencv.hpp>
@@ -32,8 +33,16 @@
 #include "HeightMap.h"
 #include "GradientMap.h"
 #include "MaskMap.h"
+#include "HeightMapGenerator.h"
+#include "HeightMap2PCMapper.h"
+#include "MapWrapper.h"
 #include "SolverBuilder.h"
 #include "SparseLinearSolver.h"
+#include "EigenUtil.h"
+
+/* PATCHMATCH */
+#include "ImageInpainting.h"
+#include "ImageUtil.h"
 
 
 #endif //PCH_H

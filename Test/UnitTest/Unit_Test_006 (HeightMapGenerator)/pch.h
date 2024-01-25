@@ -13,6 +13,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <cmath>
+#include <variant>
 
 /* BOOST */
 #include <boost/format.hpp>

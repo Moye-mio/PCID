@@ -27,3 +27,5 @@
 #include "GradientMap.h"
 #include "MapUtil.h"
 #include "SparseLinearSolver.h"
+#include "EigenUtil.h"
+

@@ -13,6 +13,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <cmath>
+#include <variant>
 
 /* BOOST */
 #include <boost/format.hpp>
@@ -28,3 +29,4 @@
 #include "MapUtil.h"
 #include "SparseLinearSolver.h"
 #include "SolverBuilder.h"
+#include "EigenUtil.h"

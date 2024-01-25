@@ -17,6 +17,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <cstdlib>
+#include <variant>
 
 /* CV */
 #include <opencv2/opencv.hpp>

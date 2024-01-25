@@ -57,11 +57,16 @@
     <ClCompile Include="SolverBuilder.cpp">
       <Filter>Solver</Filter>
     </ClCompile>
-    <ClCompile Include="PointCloudUtil.cpp" />
     <ClCompile Include="MapUtil.cpp">
       <Filter>Map\Util</Filter>
     </ClCompile>
     <ClCompile Include="HeightMapGenerator.cpp">
+      <Filter>PointCloud\HeightMap</Filter>
+    </ClCompile>
+    <ClCompile Include="PointCloudUtil.cpp">
+      <Filter>PointCloud\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="HeightMap2PCMapper.cpp">
       <Filter>PointCloud\HeightMap</Filter>
     </ClCompile>
   </ItemGroup>
@@ -104,6 +109,12 @@
     </ClInclude>
     <ClInclude Include="MapWrapper.h">
       <Filter>Map\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="EigenUtil.h">
+      <Filter>Solver</Filter>
+    </ClInclude>
+    <ClInclude Include="HeightMap2PCMapper.h">
+      <Filter>PointCloud\HeightMap</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

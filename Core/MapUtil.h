@@ -42,4 +42,6 @@ inline ptr<CMaskMap> MapUtil::geneMask(const ptr<CMap<T>> m) {
 	return pMask;
 }
 
+
+
 }

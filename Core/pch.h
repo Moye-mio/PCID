@@ -16,6 +16,7 @@
 #include <optional>
 #include <numeric>
 #include <numbers>
+#include <variant>
 
 /* OMP */
 #include <omp.h>
