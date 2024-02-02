@@ -44,7 +44,7 @@
 int main() {
 	int Resolution = 100;
 	PC_t::Ptr pInput(new PC_t), pOutput(new PC_t);
-	const std::string LoadPath = MODEL_DIR + std::string("hole/1.ply");
+	const std::string LoadPath = MAINEXPERIMENT_DIR + std::string("hole/1.ply");
 	const std::string SavePath = "Result/output.ply";
 
 	io::CPCLoader Loader;

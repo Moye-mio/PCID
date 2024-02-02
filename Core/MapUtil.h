@@ -1,5 +1,7 @@
 #pragma once
 
+#include "MaskMap.h"
+
 namespace core {
 
 template <typename T>
@@ -10,7 +12,6 @@ template <typename T>
 class CMap;
 class CHeightMap;
 class CGradientMap;
-class CMaskMap;
 
 class MapUtil {
 public:
