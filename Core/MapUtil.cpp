@@ -3,7 +3,6 @@
 #include "Map.hpp"
 #include "Heightmap.h"
 #include "GradientMap.h"
-#include "MaskMap.h"
 #include "IOUtil.h"
 
 using namespace core;
@@ -63,6 +62,28 @@ ptr<CHeightMap> MapUtil::getHeightMapFromGradientMap(const ptr<CGradientMap> g, 
 			else {
 				pHeight->setValue(i, k, g->getValue(i, k).y);
 			}
+		}
+	}
+
+	return pHeight;
+}
+
+ptr<CHeightMap> MapUtil::resize(const ptr<CHeightMap> h, uint rx, uint ry) {
+	_EARLY_RETURN(h->isValid() == false, "map resize error: height map is invalid.", nullptr);
+	_EARLY_RETURN(rx * ry == 0, "map resize error: rx * ry == 0.", nullptr);
+	
+	std::cout << "map resize: from [" << h->getWidth() << ", " << h->getHeight() << "] to [" << rx << ", " << ry << "]" << std::endl;
+
+	ptr<CHeightMap> pHeight(new CHeightMap(rx, ry, 0.0f));
+	for (int i = 0; i < rx; i++) {
+		for (int k = 0; k < ry; k++) {
+			float sx = (float)(i + 0.5f) / (float)rx * (float)h->getWidth();
+			float sy = (float)(k + 0.5f) / (float)ry * (float)h->getHeight();
+			float r = h->bisample(sx, sy);
+
+			_EARLY_RETURN(MathUtil::isFloatNan(r), "bisample nan: [" << i << ", " << k << "]", nullptr);
+
+			pHeight->setValue(i, k, r);
 		}
 	}
 

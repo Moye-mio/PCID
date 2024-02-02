@@ -22,6 +22,7 @@ public:
 	static ptr<CGradientMap> geneGradient(const ptr<CHeightMap> h);
 	static ptr<CGradientMap> geneGradient(const ptr<CGradientMap> g);
 	static ptr<CHeightMap> getHeightMapFromGradientMap(const ptr<CGradientMap> g, uint axis);
+	static ptr<CHeightMap> resize(const ptr<CHeightMap> h, uint rx, uint ry);
 
 private:
 

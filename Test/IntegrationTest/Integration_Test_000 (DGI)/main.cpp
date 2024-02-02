@@ -42,16 +42,17 @@
 
 
 int main() {
-	int Resolution = 100;
+	int WorkResolution = 200;
+	int RecoResolution = 512;
 	PC_t::Ptr pInput(new PC_t), pOutput(new PC_t);
-	const std::string LoadPath = MAINEXPERIMENT_DIR + std::string("hole/1.ply");
+	const std::string LoadPath = MAINEXPERIMENT_DIR + std::string("Hole/1.ply");
 	const std::string SavePath = "Result/output.ply";
 
 	io::CPCLoader Loader;
 	pInput = Loader.loadDataFromFile(LoadPath);
 
 	CDGI DGI;
-	DGI.setResolution(Resolution);
+	DGI.setResolution(WorkResolution, RecoResolution);
 	bool r = DGI.run(pInput, pOutput);
 
 	if (r == false) {

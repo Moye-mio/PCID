@@ -52,7 +52,7 @@ public:
 
 	template <>
 	static bool isNan<vec2f>(vec2f a) {
-		return isFloatNan(a.x) && isFloatNan(a.y);
+		return isFloatNan(a.x) || isFloatNan(a.y);
 	}
 
 	static float linearInterpolate(float a, float b, float i) {

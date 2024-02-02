@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "DGI.h"
 
-bool CDGI::setResolution(uint vRes) {
-	_EARLY_RETURN(vRes == 0, "DGI set res error: res == 0.", false);
+bool CDGI::setResolution(uint vWorkRes, uint vRecoRes) {
+	_EARLY_RETURN(vWorkRes * vRecoRes == 0, "DGI set res error: res == 0.", false);
 
-	m_Res = vRes;
+	m_WorkRes = vWorkRes;
+	m_RecoRes = vRecoRes;
 	return true;
 }
 
@@ -12,8 +13,9 @@ bool CDGI::run(const PC_t::Ptr vInput, PC_t::Ptr& voOutput) {
 	_EARLY_RETURN(!isPointCloudValid(vInput), "DGI run error: input is not valid.", false);
 
 	core::CHeightMapGenerator HMGenerator;
-	ptr<core::CHeightMap> pHeight = HMGenerator.generate(vInput, m_Res, m_Res);
+	ptr<core::CHeightMap> pHeight = HMGenerator.generate(vInput, m_WorkRes, m_WorkRes);
 	_EARLY_RETURN(!pHeight->isValid(), "DGI run error: height map is not valid.", false);
+	core::CMapWrapper::saveMapToLocal(pHeight, "Images/Input.png");
 
 	ptr<core::CGradientMap> pGradient = core::MapUtil::geneGradient(pHeight);
 	_EARLY_RETURN(!pGradient->isValid(), "DGI run error: gradient map is not valid.", false);
@@ -28,13 +30,19 @@ bool CDGI::run(const PC_t::Ptr vInput, PC_t::Ptr& voOutput) {
 	_EARLY_RETURN(!pGog->isValid(), "DGI run error: gog map is not valid.", false);
 
 	ptr<core::CHeightMap> pHeightFilled = __solveEquations(pHeight, pGradientFilled, pGog);
-	_EARLY_RETURN(!pHeightFilled->isValid(), "DGI run error: height filled map is not valid.", false);
-
-	voOutput = __genePointCloud(pHeight, pHeightFilled, core::PointCloudUtil::calcAABB(vInput), 10);
-	_EARLY_RETURN(!isPointCloudValid(voOutput), "DGI run error: output is not valid.", false);
-
-	core::CMapWrapper::saveMapToLocal(pHeight, "Images/Input.png");
+	_EARLY_RETURN(!pHeightFilled->isValid() || !pHeightFilled->isNoEmpty(), "DGI run error: height filled map is not valid.", false);
 	core::CMapWrapper::saveMapToLocal(pHeightFilled, "Images/Output.png");
+
+	ptr<core::CHeightMap> pHeightReco = HMGenerator.generate(vInput, m_RecoRes, m_RecoRes);
+	_EARLY_RETURN(!pHeightReco->isValid(), "DGI run error: pHeightReco map is not valid.", false);
+	core::CMapWrapper::saveMapToLocal(pHeightReco, "Images/InputReco.png");
+
+	ptr<core::CHeightMap> pFilledReco = core::MapUtil::resize(pHeightFilled, pHeightReco->getWidth(), pHeightReco->getHeight());
+	_EARLY_RETURN(!pFilledReco->isValid(), "DGI run error: FilledReco map is not valid.", false);
+	core::CMapWrapper::saveMapToLocal(pFilledReco, "Images/OutputReco.png");
+
+	voOutput = __genePointCloud(pHeightReco, pFilledReco, core::PointCloudUtil::calcAABB(vInput), 10);
+	_EARLY_RETURN(!isPointCloudValid(voOutput), "DGI run error: output is not valid.", false);
 
 	return true;
 }
@@ -47,7 +55,7 @@ ptr<core::CGradientMap> CDGI::__inpaintImage(const ptr<core::CGradientMap> vRaw,
 	cv::Mat ResultImage;
 
 	alg::CImageInpainting Inpainter;
-	bool r = Inpainter.run(GradientImage, MaskImage, ResultImage, alg::PM);
+	bool r = Inpainter.run(GradientImage, MaskImage, ResultImage, alg::CV_TEALA);
 	_EARLY_RETURN(!r, "DGI run error: image inpainting fails.", pFilled);
 
 	pFilled = std::get<1>(core::CMapWrapper::castCVMat2Map(ResultImage));
@@ -80,6 +88,8 @@ ptr<core::CHeightMap> CDGI::__solveEquations(const ptr<core::CHeightMap> vInput,
 
 	_EARLY_RETURN(!pFilled->isValid(), "DGI run error: filled height map set value bug.", pFilled);
 
+	std::cout << "DGI: filled height map has " << pFilled->getEmptyCount() << " empty values, max: " << pFilled->getMax() << ", min: " << pFilled->getMin() << std::endl;
+
 	return pFilled;
 }
 
@@ -87,6 +97,7 @@ PC_t::Ptr CDGI::__genePointCloud(const ptr<core::CHeightMap> vInput, const ptr<c
 	
 	core::CHeightMapSampler Sampler;
 	std::vector<vec3f> Samples;
+
 	bool r = Sampler.sample(vInput, vFilled, vPointNumberPerPixel, Samples);
 	_EARLY_RETURN(!r, "DGI run error: sample fails.", nullptr);
 

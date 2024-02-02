@@ -186,8 +186,9 @@ inline bool CMap<T>::isValid(uint i, uint k) const {
 template<typename T>
 inline bool CMap<T>::isEmpty(uint i, uint k) const {
 	_EARLY_RETURN(i >= m_Width || k >= m_Height, "map index invalid: i or k out of scale.", false);
+	_EARLY_RETURN(!isValid(i, k), "map invalid: " + std::to_string(i) + ", " + std::to_string(k), false);
 
-	if (isValid(i, k) && MathUtil::isEqual(m_Data[i][k], m_Empty)) {
+	if (MathUtil::isEqual(m_Data[i][k], m_Empty)) {
 		return true;
 	}
 

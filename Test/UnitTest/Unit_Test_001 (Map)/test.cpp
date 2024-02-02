@@ -29,6 +29,32 @@ TEST(HeightMap, Basic_Function) {
 		}
 	}
 
+	for (int i = 0; i < 100; i++) {
+		float x = MathUtil::geneRandomReal(0, 9);
+		float y = MathUtil::geneRandomReal(0, 9);
+		float v = pHeightMap->bisample(x, y);
+		x = (x < 0.5) ? 0 : x - 0.5f;
+		y = (y < 0.5) ? 0 : y - 0.5f;
+		EXPECT_TRUE(MathUtil::isEqual<float>(v, x + y));
+	}
+
+	std::shared_ptr<core::CHeightMap> pSrc(new core::CHeightMap(2, 2, 0));
+	pSrc->setValue(0, 0, 0);
+	pSrc->setValue(0, 1, 0);
+	pSrc->setValue(1, 0, 255);
+	pSrc->setValue(1, 1, 255);
+	auto pDst = core::MapUtil::resize(pSrc, 255, 255);
+	for (int i = 0; i < pDst->getWidth(); i++) {
+		for (int k = 0; k < pDst->getHeight(); k++) {
+			if (i <= 63) {
+				EXPECT_TRUE(MathUtil::isEqual<float>(pDst->getValue(i, k), 0));
+			}
+			else if (i >= 192) {
+				EXPECT_LT(std::fabsf(pDst->getValue(i, k) - 255.0f), 0.0001f);
+			}
+		}
+	}
+
 	pHeightMap->setEmpty(5, 5);
 	EXPECT_TRUE(pHeightMap->isEmpty(5, 5));
 	EXPECT_EQ(pHeightMap->getEmptyCount(), 1);

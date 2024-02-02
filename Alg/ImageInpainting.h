@@ -3,8 +3,8 @@
 namespace alg {
 
 enum EInpaintMode {
-	CV_TEALA,
 	CV_NS,
+	CV_TEALA,
 	PM,
 };
 
@@ -16,7 +16,7 @@ public:
 	bool run(const cv::Mat& vSrc, const cv::Mat& vMask, cv::Mat& voRes, EInpaintMode vMode);
 
 private:
-
+	void __inpaintByOpenCV(const cv::Mat& vSrc, const cv::Mat& vMask, cv::Mat& voRes, int vFlag);
 
 };
 
