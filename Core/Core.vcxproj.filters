@@ -49,6 +49,9 @@
     <Filter Include="PointCloud\Surface\Fitting">
       <UniqueIdentifier>{dfd6c1dc-1d6a-4558-9a99-3c76c2541900}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PointCloud\Surface\Sample">
+      <UniqueIdentifier>{2e73762f-357f-4f14-8ae3-5d532883429c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HeightMap.cpp">
