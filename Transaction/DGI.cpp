@@ -41,7 +41,10 @@ bool CDGI::run(const PC_t::Ptr vInput, PC_t::Ptr& voOutput) {
 	_EARLY_RETURN(!pFilledReco->isValid(), "DGI run error: FilledReco map is not valid.", false);
 	core::CMapWrapper::saveMapToLocal(pFilledReco, "Images/OutputReco.png");
 
-	voOutput = __genePointCloud(pHeightReco, pFilledReco, core::PointCloudUtil::calcAABB(vInput), 10);
+	voOutput = __genePointCloud(pHeightReco, pFilledReco, core::PointCloudUtil::calcAABB(vInput), 2);
+	_EARLY_RETURN(!isPointCloudValid(voOutput), "DGI run error: output is not valid.", false);
+
+	bool r = __removeExcessPoints(vInput, voOutput);
 	_EARLY_RETURN(!isPointCloudValid(voOutput), "DGI run error: output is not valid.", false);
 
 	return true;
@@ -108,4 +111,10 @@ PC_t::Ptr CDGI::__genePointCloud(const ptr<core::CHeightMap> vInput, const ptr<c
 	return pCloud;
 }
 
+bool CDGI::__removeExcessPoints(const PC_t::Ptr vRaw, PC_t::Ptr& vioFilled) {
+	core::CDuplicateRemover Remover;
+	bool r = Remover.run(vRaw, vioFilled, 5);
+	_EARLY_RETURN(!r, "DGI run error: remove excess points fails.", false);
 
+	return true;
+}

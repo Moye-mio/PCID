@@ -40,6 +40,15 @@
     <Filter Include="PointCloud\Mapper">
       <UniqueIdentifier>{b62aa273-9505-4de0-95bb-893dc170bb30}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PointCloud\Density">
+      <UniqueIdentifier>{44fdaa55-d3c8-4737-be33-837b68b2fbe4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PointCloud\Surface">
+      <UniqueIdentifier>{7427dc8a-8fa9-4172-8ea0-8b6a1c9f216e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PointCloud\Surface\Fitting">
+      <UniqueIdentifier>{dfd6c1dc-1d6a-4558-9a99-3c76c2541900}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HeightMap.cpp">
@@ -74,6 +83,15 @@
     </ClCompile>
     <ClCompile Include="PCMapper.cpp">
       <Filter>PointCloud\Mapper</Filter>
+    </ClCompile>
+    <ClCompile Include="DensityEstimator.cpp">
+      <Filter>PointCloud\Density</Filter>
+    </ClCompile>
+    <ClCompile Include="DuplicateRemover.cpp">
+      <Filter>PointCloud\Density</Filter>
+    </ClCompile>
+    <ClCompile Include="NurbsFitting.cpp">
+      <Filter>PointCloud\Surface\Fitting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -124,6 +142,15 @@
     </ClInclude>
     <ClInclude Include="PCMapper.h">
       <Filter>PointCloud\Mapper</Filter>
+    </ClInclude>
+    <ClInclude Include="DensityEstimator.h">
+      <Filter>PointCloud\Density</Filter>
+    </ClInclude>
+    <ClInclude Include="DuplicateRemover.h">
+      <Filter>PointCloud\Density</Filter>
+    </ClInclude>
+    <ClInclude Include="NurbsFitting.h">
+      <Filter>PointCloud\Surface\Fitting</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

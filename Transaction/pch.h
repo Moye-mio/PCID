@@ -42,6 +42,7 @@
 #include "SparseLinearSolver.h"
 #include "EigenUtil.h"
 #include "PointCloudUtil.h"
+#include "DuplicateRemover.h"
 
 /* PATCHMATCH */
 #include "ImageInpainting.h"

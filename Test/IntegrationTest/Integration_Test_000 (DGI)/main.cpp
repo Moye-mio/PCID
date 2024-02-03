@@ -32,6 +32,7 @@
 #include "SolverBuilder.h"
 #include "SparseLinearSolver.h"
 #include "EigenUtil.h"
+#include "DensityEstimator.h"
 
 /* ALG */
 #include "ImageInpainting.h"
