@@ -63,6 +63,52 @@ TEST(HMGenerator, ComplexCloud) {
 	}
 }
 
+TEST(HMGenerator, ComplexCloud2) {
+	core::ptr<core::CHeightMap> pGT(new core::CHeightMap(100, 100));
+
+	PC_t::Ptr pCloud(new PC_t);
+	for (int i = 0; i < 100; i++) {
+		for (int k = 0; k < 100; k++) {
+			float maxz = -FLT_MAX;
+			float minz = FLT_MAX;
+			int posi = 0;
+			int nega = 0;
+			for (int m = 0; m < 11; m++) {
+				float x = MathUtil::geneRandomReal(0, 1);
+				float y = MathUtil::geneRandomReal(0, 1);
+				float z = MathUtil::geneRandomReal(-255, 255);
+				pCloud->emplace_back(Point_t(i + x, k + y, z));
+				maxz = std::fmaxf(maxz, z);
+				minz = std::fminf(minz, z);
+
+				if (z > 0)
+					posi++;
+				else if (z < 0)
+					nega++;
+			}
+			if (posi >= nega)
+				pGT->setValue(i, k, maxz);
+			else 
+				pGT->setValue(i, k, minz);
+		}
+	}
+	pCloud->emplace_back(Point_t(0, 0, 0.0f));
+	pCloud->emplace_back(Point_t(100, 100, 0.0f));
+
+	core::CHeightMapGenerator HMGenerator;
+	auto pHeight = HMGenerator.generate(pCloud, 100, 100);
+	EXPECT_TRUE(pHeight->isValid() && pHeight->isNoEmpty());
+
+	for (int i = 0; i < 100; i++) {
+		for (int k = 0; k < 100; k++) {
+			EXPECT_TRUE(MathUtil::isEqual(pHeight->getValue(i, k), pGT->getValue(i, k)));
+			if (MathUtil::isEqual(pHeight->getValue(i, k), pGT->getValue(i, k)) == false) {
+				std::cout << "not equal: [" << i << ", " << k << "]: " << pHeight->getValue(i, k) << ", " << pGT->getValue(i, k) << std::endl;		/* sometimes bug because of floating-point precision  */
+			}
+		}
+	}
+}
+
 TEST(HMGenerator, LoadCloud) {
 	const std::string Path = TESTMODEL_DIR + std::string("BigTerrain.ply");
 	io::CPCLoader Loader;
