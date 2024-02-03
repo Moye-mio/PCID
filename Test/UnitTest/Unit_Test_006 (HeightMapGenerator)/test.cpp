@@ -56,12 +56,15 @@ TEST(HMGenerator, ComplexCloud) {
 	for (int i = 0; i < 100; i++) {
 		for (int k = 0; k < 100; k++) {
 			EXPECT_TRUE(MathUtil::isEqual(pHeight->getValue(i, k), pGT->getValue(i, k)));
+			if (MathUtil::isEqual(pHeight->getValue(i, k), pGT->getValue(i, k)) == false) {
+				std::cout << "not equal: [" << i << ", " << k << "]: " << pHeight->getValue(i, k) << ", " << pGT->getValue(i, k) << std::endl;		/* sometimes bug because of floating-point precision  */
+			}
 		}
 	}
 }
 
 TEST(HMGenerator, LoadCloud) {
-	const std::string Path = MODEL_DIR + std::string("002.ply");
+	const std::string Path = TESTMODEL_DIR + std::string("BigTerrain.ply");
 	io::CPCLoader Loader;
 	PC_t::Ptr pCloud = Loader.loadDataFromFile(Path);
 	_ASSERTE(isPointCloudValid(pCloud));

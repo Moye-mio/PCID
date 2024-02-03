@@ -157,9 +157,12 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="PCMapper.h" />
     <ClInclude Include="PointCloudUtil.h" />
+    <ClInclude Include="Proj.h" />
+    <ClInclude Include="ProjManager.h" />
     <ClInclude Include="SolverBuilder.h" />
     <ClInclude Include="EigenUtil.h" />
     <ClInclude Include="SparseLinearSolver.h" />
+    <ClInclude Include="SurfaceUtil.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DensityEstimator.cpp" />
@@ -177,8 +180,10 @@
     </ClCompile>
     <ClCompile Include="PCMapper.cpp" />
     <ClCompile Include="PointCloudUtil.cpp" />
+    <ClCompile Include="ProjManager.cpp" />
     <ClCompile Include="SolverBuilder.cpp" />
     <ClCompile Include="SparseLinearSolver.cpp" />
+    <ClCompile Include="SurfaceUtil.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

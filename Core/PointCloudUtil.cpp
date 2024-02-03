@@ -21,3 +21,37 @@ SAABB PointCloudUtil::calcAABB(const PC_t::Ptr vCloud) {
 
 	return Box;
 }
+
+bool PointCloudUtil::calcNormal(const PC_t::Ptr vioCloud, std::uint32_t k) {
+	PT_t::Ptr pPts(new PT_t);
+	__extractXYZpt(vioCloud, pPts);
+
+	pcl::NormalEstimation<P_t, pcl::Normal> Ne;
+	pcl::search::KdTree<P_t>::Ptr pTree(new pcl::search::KdTree<P_t>());
+	pcl::PointCloud<pcl::Normal>::Ptr pNormal(new pcl::PointCloud<pcl::Normal>);
+
+	Ne.setInputCloud(pPts);
+	Ne.setSearchMethod(pTree);
+	Ne.setKSearch(k);
+	Ne.compute(*pNormal);
+
+	_EARLY_RETURN(pNormal->size() != vioCloud->size(), "point cloud util error: Normal estimator error. ", false);
+
+	for (int i = 0; i < vioCloud->size(); i++) {
+		vioCloud->at(i).normal_x = pNormal->at(i).normal_x;
+		vioCloud->at(i).normal_y = pNormal->at(i).normal_y;
+		vioCloud->at(i).normal_z = pNormal->at(i).normal_z;
+	}
+
+	return true;
+}
+
+void PointCloudUtil::__extractXYZpt(const PC_t::Ptr& vCloud, const PT_t::Ptr& voPts) {
+	if (voPts->size()) {
+		voPts->clear();
+	}
+
+	for (const auto& p : *vCloud) {
+		voPts->emplace_back(P_t(p.x, p.y, p.z));
+	}
+}

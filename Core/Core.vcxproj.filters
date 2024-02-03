@@ -49,8 +49,11 @@
     <Filter Include="PointCloud\Surface\Fitting">
       <UniqueIdentifier>{dfd6c1dc-1d6a-4558-9a99-3c76c2541900}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PointCloud\Surface\Sample">
-      <UniqueIdentifier>{2e73762f-357f-4f14-8ae3-5d532883429c}</UniqueIdentifier>
+    <Filter Include="PointCloud\Surface\Util">
+      <UniqueIdentifier>{ae27d927-1d90-4c47-8fdc-64f68b1c81d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PointCloud\Surface\Proj">
+      <UniqueIdentifier>{e35bb74a-1e5d-4ed3-8d67-fbd21807eb08}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -95,6 +98,12 @@
     </ClCompile>
     <ClCompile Include="NurbsFitting.cpp">
       <Filter>PointCloud\Surface\Fitting</Filter>
+    </ClCompile>
+    <ClCompile Include="SurfaceUtil.cpp">
+      <Filter>PointCloud\Surface\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjManager.cpp">
+      <Filter>PointCloud\Surface\Proj</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +163,15 @@
     </ClInclude>
     <ClInclude Include="NurbsFitting.h">
       <Filter>PointCloud\Surface\Fitting</Filter>
+    </ClInclude>
+    <ClInclude Include="SurfaceUtil.h">
+      <Filter>PointCloud\Surface\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Proj.h">
+      <Filter>PointCloud\Surface\Proj</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjManager.h">
+      <Filter>PointCloud\Surface\Proj</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

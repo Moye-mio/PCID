@@ -9,7 +9,7 @@ struct SAABB;
 template <typename T>
 using ptr = std::shared_ptr<T>;
 
-class CDGI {
+class CDGI {		/* use cv_ns instead of examplar-based image inpainting */
 public:
 
 	bool setResolution(uint vWorkRes, uint vRecoRes);

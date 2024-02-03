@@ -1,5 +1,8 @@
 #pragma once
 
+#include "HeightMap.h"
+#include "GradientMap.h"
+
 namespace core {
 
 class CMapWrapper {

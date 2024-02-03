@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "HeightMapGenerator.h"
 #include "HeightMap.h"
+#include "GradientMap.h"
 #include "PointCloudUtil.h"
 #include "AABB.h"
 
@@ -33,11 +34,50 @@ ptr<CHeightMap> CHeightMapGenerator::generate(const std::vector<vec3f>& vPts, ui
 
 /* Pts: coor x ¡Ê [0, 1], coor y ¡Ê [0, 1], dist z */
 ptr<CHeightMap> CHeightMapGenerator::__generate(const std::vector<vec3f>& vPts, uint vResX, uint vResY) {
-    ptr<CHeightMap> pHeight(new CHeightMap(vResX, vResY));
+    /*ptr<CHeightMap> pHeight(new CHeightMap(vResX, vResY));
 
     for (const auto& p : vPts) {
         vec2i e = __mapUV2Pixel(vec2f { p.x, p.y }, vResX, vResY);
         (*pHeight.get())[e.x][e.y] = std::fmaxf((*pHeight.get())[e.x][e.y], p.z);
+    }
+
+    return pHeight;*/
+
+
+    ptr<CHeightMap> pHeightMax(new CHeightMap(vResX, vResY)), pHeightMin(new CHeightMap(vResX, vResY, FLT_MAX)), pHeight(new CHeightMap(vResX, vResY));
+    ptr<CGradientMap> pRecord(new CGradientMap(vResX, vResY, vec2f {0, 0}));
+    pHeightMin->setEmptyValue(FLT_MAX);
+
+    for (const auto& p : vPts) {
+        vec2i e = __mapUV2Pixel(vec2f { p.x, p.y }, vResX, vResY);
+        (*pHeightMax.get())[e.x][e.y] = std::fmaxf((*pHeightMax.get())[e.x][e.y], p.z);
+        (*pHeightMin.get())[e.x][e.y] = std::fminf((*pHeightMin.get())[e.x][e.y], p.z);
+        
+        vec2f Record = pRecord->getValue(e.x, e.y);
+        if (p.z > 0) {
+            pRecord->setValue(e.x, e.y, vec2f { Record.x + 1, Record.y });
+        }
+        else if (p.z < 0) {
+            pRecord->setValue(e.x, e.y, vec2f { Record.x, Record.y + 1 });
+        }
+    }
+
+    for (int i = 0; i < vResX; i++) {
+        for (int k = 0; k < vResY; k++) {
+            _EARLY_RETURN(pHeightMax->isEmpty(i, k) != pHeightMin->isEmpty(i, k), "generate height map bug!!!", pHeight);
+            if (pHeightMax->isEmpty(i, k)) {
+                pHeight->setEmpty(i, k);
+            }
+            else {
+                vec2f Record = pRecord->getValue(i, k);
+                if (Record.x >= Record.y) {
+                    pHeight->setValue(i, k, pHeightMax->getValue(i, k));
+                }
+                else {
+                    pHeight->setValue(i, k, pHeightMin->getValue(i, k));
+                }
+            }
+        }
     }
 
     return pHeight;
