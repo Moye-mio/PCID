@@ -8,7 +8,7 @@ TEST(Surface, NT_LoadCloud) {
 	pCloud = Loader.loadDataFromFile(CloudPath);
 
 	core::CNurbsFitting Fitting;
-	Fitting.setSavePath("ControlPoints/pts.txt");
+	Fitting.setCVSavePath("ControlPoints/pts.txt");
 	EXPECT_TRUE(Fitting.run(pCloud, 3, 5, 1));
 }
 

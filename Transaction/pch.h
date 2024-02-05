@@ -43,6 +43,10 @@
 #include "EigenUtil.h"
 #include "PointCloudUtil.h"
 #include "DuplicateRemover.h"
+#include "Proj.h"
+#include "SurfaceUtil.h"
+#include "NurbsFitting.h"
+#include "ProjManager.h"
 
 /* PATCHMATCH */
 #include "ImageInpainting.h"

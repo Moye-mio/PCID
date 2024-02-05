@@ -7,6 +7,9 @@
     <Filter Include="DGI">
       <UniqueIdentifier>{62859f9e-6d57-4c7c-93df-e192b3bc07d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="OURS">
+      <UniqueIdentifier>{fa6718c4-01bd-4733-831a-51df3e59035e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -18,6 +21,9 @@
     <ClInclude Include="DGI.h">
       <Filter>DGI</Filter>
     </ClInclude>
+    <ClInclude Include="PCID.h">
+      <Filter>OURS</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -25,6 +31,9 @@
     </ClCompile>
     <ClCompile Include="DGI.cpp">
       <Filter>DGI</Filter>
+    </ClCompile>
+    <ClCompile Include="PCID.cpp">
+      <Filter>OURS</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

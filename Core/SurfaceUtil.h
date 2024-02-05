@@ -9,6 +9,7 @@ class CSurfaceUtil {
 public:
 
 	static PC_t::Ptr sampleSurface(const std::shared_ptr<pcl::on_nurbs::FittingSurface> vFit, int vSampleRate);
+	static Point_t sampleSurface(const std::shared_ptr<pcl::on_nurbs::FittingSurface> vFit, const vec2f& uv);
 	static bool calcProjPoints(const std::shared_ptr<pcl::on_nurbs::FittingSurface> vFit, const PC_t::Ptr vCloud, std::vector<SProj>& voProjs);
 
 

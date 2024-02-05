@@ -33,34 +33,43 @@
 #include "SparseLinearSolver.h"
 #include "EigenUtil.h"
 #include "DensityEstimator.h"
+#include "SurfaceUtil.h"
+#include "Proj.h"
+#include "PointCloudUtil.h"
+#include "AABB.h"
+#include "DuplicateRemover.h"
 
 /* ALG */
 #include "ImageInpainting.h"
 #include "ImageUtil.h"
 
 /* DGI */
-#include "DGI.h"
+#include "PCID.h"
 
 
 int main() {
-	int WorkResolution = 100;
-	int RecoResolution = 1000;
-	PC_t::Ptr pInput(new PC_t), pOutput(new PC_t);
-	const std::string LoadPath = MAINEXPERIMENT_DIR + std::string("Hole/rw-1.ply");
+	int WorkResolution = 200;
+	int RecoResolution = 512;
+	PC_t::Ptr pInput(new PC_t), pSub(new PC_t), pOutput(new PC_t);
+	const std::string InputLoadPath = MAINEXPERIMENT_DIR + std::string("hole/2.ply");
+	const std::string SubLoadPath = MAINEXPERIMENT_DIR + std::string("sub/2.ply");
+	//const std::string InputLoadPath = LOWFREQUENCY_DIR + std::string("hole.ply");
+	//const std::string SubLoadPath = LOWFREQUENCY_DIR + std::string("sub.ply");
 	const std::string SavePath = "Result/output.ply";
 
 	io::CPCLoader Loader;
-	pInput = Loader.loadDataFromFile(LoadPath);
+	pInput = Loader.loadDataFromFile(InputLoadPath);
+	pSub = Loader.loadDataFromFile(SubLoadPath);
 
-	CDGI DGI;
-	DGI.setResolution(WorkResolution, RecoResolution);
-	bool r = DGI.run(pInput, pOutput);
+	CPCID PCID;
+	PCID.setResolution(WorkResolution, RecoResolution);
+	bool r = PCID.run(pInput, pSub, pOutput);
 
 	if (r == false) {
-		log("DGI error.");
+		log("PCID error.");
 	}
 	else {
-		log("DGI succeeds.");
+		log("PCID succeeds.");
 	}
 
 	pcl::io::savePLYFileBinary(SavePath, *pOutput);

@@ -62,7 +62,10 @@ float computePatchDist(const cv::Mat& vLhs, const cv::Mat& vRhs, int vPatchSize)
 	if (metric == 0) {
 		dist = (float)cv::norm(vLhs, vRhs) * vPatchSize * vPatchSize;
 	}
-	else if (metric == 1)
+	else if (metric == 1) {
+		dist = (float)cv::norm(vLhs, vRhs, cv::NORM_L1) * vPatchSize * vPatchSize;
+	}
+	else if (metric == 2)
 	{
 		float ssim = calcSSIM(vLhs, vRhs);
 		if (ssim < 0) ssim = 0;

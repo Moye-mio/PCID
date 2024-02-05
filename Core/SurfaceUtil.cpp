@@ -22,6 +22,20 @@ PC_t::Ptr CSurfaceUtil::sampleSurface(const std::shared_ptr<pcl::on_nurbs::Fitti
 	return pCloud;
 }
 
+Point_t core::CSurfaceUtil::sampleSurface(const std::shared_ptr<pcl::on_nurbs::FittingSurface> vFit, const vec2f& uv) {
+	Point_t Pt(0.0f, 0, 0);
+	_EARLY_RETURN(!vFit, "surface sample : surface is null", Pt);
+	_EARLY_RETURN(uv.x < 0 || uv.x>1 || uv.y < 0 || uv.y>1, "surface sample : uv is invalid.", Pt);
+
+	const auto& Nurbs = vFit->m_nurbs;
+	const auto p = Nurbs.PointAt(uv.x, uv.y);
+	Pt.x = p.x;
+	Pt.y = p.y;
+	Pt.z = p.z;
+
+	return Pt;
+}
+
 bool CSurfaceUtil::calcProjPoints(const std::shared_ptr<pcl::on_nurbs::FittingSurface> vFit, const PC_t::Ptr vCloud, std::vector<SProj>& voProjs) {
 	_EARLY_RETURN(!vFit, "surface sample : surface is null", false);
 	

@@ -44,8 +44,12 @@ bool CNurbsFitting::run(const PC_t::Ptr& vCloud, int vDegree, int vRefinement, i
 
 	m_Fit = std::make_shared<pcl::on_nurbs::FittingSurface>(Fit);
 	
-	if (m_Path.size()) {
+	if (m_CVPath.size()) {
 		__saveControlPointsToDisk();
+	}
+
+	if (m_KnotPath.size()) {
+		__saveKnotToDisk();
 	}
 
 	std::cout << "Nurbs fitting finished: Success!" << std::endl;
@@ -105,7 +109,7 @@ void CNurbsFitting::__PCLPoint2Vector3d(const PC_t::Ptr& vCloud, pcl::on_nurbs::
 }
 
 void CNurbsFitting::__saveControlPointsToDisk() {
-	std::ofstream File(m_Path);
+	std::ofstream File(m_CVPath);
 	for (int i = 0; i < m_Fit->m_nurbs.m_cv_count[0]; i++) {
 		std::string sx = "";
 		std::string sy = "";
@@ -119,5 +123,23 @@ void CNurbsFitting::__saveControlPointsToDisk() {
 		}
 		File << sx << std::endl << sy << std::endl << sz << std::endl << std::endl;
 	}
+	File.close();
+}
+
+void core::CNurbsFitting::__saveKnotToDisk() {
+	std::ofstream File(m_KnotPath);
+
+	auto pKnotsU = m_Fit->m_nurbs.Knot(0);
+	auto pKnotsV = m_Fit->m_nurbs.Knot(1);
+	std::string su = "";
+	std::string sv = "";
+	for (int i = 0; i < m_Fit->m_nurbs.KnotCount(0); i++) {
+		su += std::to_string(pKnotsU[i]) + " ";
+	}
+	for (int i = 0; i < m_Fit->m_nurbs.KnotCount(1); i++) {
+		sv += std::to_string(pKnotsV[i]) + " ";
+	}
+	File << su << std::endl << sv << std::endl;
+
 	File.close();
 }
