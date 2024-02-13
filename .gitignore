@@ -37,6 +37,7 @@ bld/
 [Mm]odel/
 [Mm]odels/
 *.ply
+*.pcd
 *.bmp
 *.png
 *.jpg

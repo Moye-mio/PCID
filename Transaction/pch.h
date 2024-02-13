@@ -18,6 +18,7 @@
 #include <unordered_set>
 #include <cstdlib>
 #include <variant>
+#include <numbers>
 
 /* CV */
 #include <opencv2/opencv.hpp>
@@ -27,6 +28,7 @@
 
 /* IO */
 #include "PCLoader.h"
+#include <pcl/io/ply_io.h>
 
 /* CORE */
 #include "AABB.h"

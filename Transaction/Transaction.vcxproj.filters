@@ -10,6 +10,9 @@
     <Filter Include="OURS">
       <UniqueIdentifier>{fa6718c4-01bd-4733-831a-51df3e59035e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="NBFM">
+      <UniqueIdentifier>{9d771790-281a-455c-b673-eb8b681b3dca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -24,6 +27,9 @@
     <ClInclude Include="PCID.h">
       <Filter>OURS</Filter>
     </ClInclude>
+    <ClInclude Include="NBFM.h">
+      <Filter>NBFM</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -34,6 +40,9 @@
     </ClCompile>
     <ClCompile Include="PCID.cpp">
       <Filter>OURS</Filter>
+    </ClCompile>
+    <ClCompile Include="NBFM.cpp">
+      <Filter>NBFM</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

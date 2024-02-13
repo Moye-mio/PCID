@@ -117,6 +117,13 @@ void CNurbsFitting::__saveControlPointsToDisk() {
 		for (int k = 0; k < m_Fit->m_nurbs.m_cv_count[1]; k++) {
 			ON_3dPoint p;
 			m_Fit->m_nurbs.GetCV(i, k, p);
+
+			{
+				p.x = 0.0;
+				p.y = 0.0;
+				p.z = 0.0;
+			}
+
 			sx += std::to_string(p.x) + " ";
 			sy += std::to_string(p.y) + " ";
 			sz += std::to_string(p.z) + " ";
