@@ -55,6 +55,18 @@
     <Filter Include="PointCloud\Surface\Proj">
       <UniqueIdentifier>{e35bb74a-1e5d-4ed3-8d67-fbd21807eb08}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PointCloud\Hole">
+      <UniqueIdentifier>{57ce8145-ed52-4635-9530-21a5051e9bbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PointCloud\Space">
+      <UniqueIdentifier>{e7f0ebf3-3dda-482b-9e5f-743d89fafdd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PointCloud\Space\Voxel">
+      <UniqueIdentifier>{73d59968-e604-4117-a056-37750a34f2c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PointCloud\Space\Cube">
+      <UniqueIdentifier>{1c37f29b-e006-47bf-88c9-971c6bebea92}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HeightMap.cpp">
@@ -105,6 +117,22 @@
     <ClCompile Include="ProjManager.cpp">
       <Filter>PointCloud\Surface\Proj</Filter>
     </ClCompile>
+    <ClCompile Include="HoleDetector.cpp">
+      <Filter>PointCloud\Hole</Filter>
+    </ClCompile>
+    <ClCompile Include="OutlierDetector.cpp">
+      <Filter>PointCloud\Hole</Filter>
+    </ClCompile>
+    <ClCompile Include="Voxelizer.cpp">
+      <Filter>PointCloud\Space\Voxel</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeManager.cpp">
+      <Filter>PointCloud\Space\Cube</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeSplitter.cpp">
+      <Filter>PointCloud\Space\Cube</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HeightMap.h">
@@ -172,6 +200,27 @@
     </ClInclude>
     <ClInclude Include="ProjManager.h">
       <Filter>PointCloud\Surface\Proj</Filter>
+    </ClInclude>
+    <ClInclude Include="HoleDetector.h">
+      <Filter>PointCloud\Hole</Filter>
+    </ClInclude>
+    <ClInclude Include="OutlierDetector.h">
+      <Filter>PointCloud\Hole</Filter>
+    </ClInclude>
+    <ClInclude Include="Voxelizer.h">
+      <Filter>PointCloud\Space\Voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="Cube.h">
+      <Filter>PointCloud\Space\Cube</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeManager.h">
+      <Filter>PointCloud\Space\Cube</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeSplitter.h">
+      <Filter>PointCloud\Space\Cube</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeUtil.h">
+      <Filter>PointCloud\Space\Cube</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
