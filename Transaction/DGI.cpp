@@ -15,18 +15,18 @@ bool CDGI::run(const PC_t::Ptr vInput, PC_t::Ptr& voOutput) {
 	core::CHeightMapGenerator HMGenerator;
 	ptr<core::CHeightMap> pHeight = HMGenerator.generate(vInput, m_WorkRes, m_WorkRes);
 	_EARLY_RETURN(!pHeight->isValid(), "DGI run error: height map is not valid.", false);
-	core::CMapWrapper::saveMapToLocal(pHeight, "Images/Input.png");
 
-	ptr<core::CGradientMap> pGradient = core::MapUtil::geneGradient(pHeight);
+	core::CMapWrapper::saveMapToLocal(pHeight, "Images/Input.png");
+	ptr<core::CGradientMap> pGradient = core::MapUtil::GetInstance().geneGradient(pHeight);
 	_EARLY_RETURN(!pGradient->isValid(), "DGI run error: gradient map is not valid.", false);
 
-	ptr<core::CMaskMap> pMask = core::MapUtil::geneMask<vec2f>(pGradient);
+	ptr<core::CMaskMap> pMask = core::MapUtil::GetInstance().geneMask<vec2f>(pGradient);
 	_EARLY_RETURN(!pMask->isValid(), "DGI run error: mask map is not valid.", false);
 
 	ptr<core::CGradientMap> pGradientFilled = __inpaintImage(pGradient, pMask);
 	_EARLY_RETURN(!pGradientFilled->isValid(), "DGI run error: gradient filled map is not valid.", false);
 
-	ptr<core::CGradientMap> pGog = core::MapUtil::geneGradient(pGradientFilled);
+	ptr<core::CGradientMap> pGog = core::MapUtil::GetInstance().geneGradient(pGradientFilled);
 	_EARLY_RETURN(!pGog->isValid(), "DGI run error: gog map is not valid.", false);
 
 	ptr<core::CHeightMap> pHeightFilled = __solveEquations(pHeight, pGradientFilled, pGog);
@@ -37,7 +37,7 @@ bool CDGI::run(const PC_t::Ptr vInput, PC_t::Ptr& voOutput) {
 	_EARLY_RETURN(!pHeightReco->isValid(), "DGI run error: pHeightReco map is not valid.", false);
 	core::CMapWrapper::saveMapToLocal(pHeightReco, "Images/InputReco.png");
 
-	ptr<core::CHeightMap> pFilledReco = core::MapUtil::resize(pHeightFilled, pHeightReco->getWidth(), pHeightReco->getHeight());
+	ptr<core::CHeightMap> pFilledReco = core::MapUtil::GetInstance().resize(pHeightFilled, pHeightReco->getWidth(), pHeightReco->getHeight());
 	_EARLY_RETURN(!pFilledReco->isValid(), "DGI run error: FilledReco map is not valid.", false);
 	core::CMapWrapper::saveMapToLocal(pFilledReco, "Images/OutputReco.png");
 

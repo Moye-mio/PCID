@@ -42,16 +42,16 @@ bool CPCID::run(const PC_t::Ptr vInput, const PC_t::Ptr vSub, PC_t::Ptr& voOutpu
 
 	core::CMapWrapper::saveMapToLocal(pHeight, "Images/Input.png");
 
-	ptr<core::CGradientMap> pGradient = core::MapUtil::geneGradient(pHeight);
+	ptr<core::CGradientMap> pGradient = core::MapUtil::GetInstance().geneGradient(pHeight);
 	_EARLY_RETURN(!pGradient->isValid(), "PCID error: gradient map is not valid.", false);
 
-	ptr<core::CMaskMap> pMask = core::MapUtil::geneMask<vec2f>(pGradient);
+	ptr<core::CMaskMap> pMask = core::MapUtil::GetInstance().geneMask<vec2f>(pGradient);
 	_EARLY_RETURN(!pMask->isValid(), "PCID error: mask map is not valid.", false);
 
 	ptr<core::CGradientMap> pGradientFilled = __inpaintImage(pGradient, pMask);
 	_EARLY_RETURN(!pGradientFilled->isValid(), "PCID error: gradient filled map is not valid.", false);
 
-	ptr<core::CGradientMap> pGog = core::MapUtil::geneGradient(pGradientFilled);
+	ptr<core::CGradientMap> pGog = core::MapUtil::GetInstance().geneGradient(pGradientFilled);
 	_EARLY_RETURN(!pGog->isValid(), "PCID error: gog map is not valid.", false);
 
 	ptr<core::CHeightMap> pHeightFilled = __solveEquations(pHeight, pGradientFilled, pGog);
@@ -62,7 +62,7 @@ bool CPCID::run(const PC_t::Ptr vInput, const PC_t::Ptr vSub, PC_t::Ptr& voOutpu
 	_EARLY_RETURN(!pHeightReco->isValid(), "PCID error: pHeightReco map is not valid.", false);
 	core::CMapWrapper::saveMapToLocal(pHeightReco, "Images/InputReco.png");
 
-	ptr<core::CHeightMap> pFilledReco = core::MapUtil::resize(pHeightFilled, pHeightReco->getWidth(), pHeightReco->getHeight());
+	ptr<core::CHeightMap> pFilledReco = core::MapUtil::GetInstance().resize(pHeightFilled, pHeightReco->getWidth(), pHeightReco->getHeight());
 	_EARLY_RETURN(!pFilledReco->isValid(), "PCID error: FilledReco map is not valid.", false);
 	core::CMapWrapper::saveMapToLocal(pFilledReco, "Images/OutputReco.png");
 

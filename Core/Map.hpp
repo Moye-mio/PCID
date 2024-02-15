@@ -2,242 +2,250 @@
 
 #include <cmath>
 #include <memory>
+#include<MathUtil.h>
+#include <cstdint>
 
 namespace core {
 
-using uint = std::uint32_t;
-template <typename T>
-using ptr = std::shared_ptr<T>;
+	using uint = std::uint32_t;
+	template <typename T>
+	using ptr = std::shared_ptr<T>;
 
-template <typename T>
-class CMap {
-public:
-	virtual ~CMap();
+	template <typename T>
+	class CMap {
+	public:
+		virtual ~CMap();
 
-	void setWidth(uint w);
-	void setHeight(uint h);
-	void setSize(uint w, uint h);
-	void setEmptyValue(T v);
-	bool setValue(uint i, uint k, T v);
-	bool setEmpty(uint i, uint k);
-	bool set(const ptr<CMap> m);
+		void setWidth(uint vWidth);
+		void setHeight(uint vHeight);
+		void setSize(uint vWidth, uint vHeight);
+		void setEmptyValue(T vValue);
+		bool setValue(uint vXPosition, uint vYPosition, T vValue);
+		bool setEmpty(uint vXPosition, uint vYPosition);
+		bool set(const ptr<CMap> vpM);
 
-	uint getArea() const { return m_Width * m_Height; }
-	uint getEmptyCount() const;
-	uint getWidth() const { return m_Width; }
-	uint getHeight() const { return m_Height; }
-	T getValue(uint i, uint k) const;
+		uint getArea() const { return m_Width * m_Height; }
+		uint getEmptyCount() const;
+		uint getWidth() const { return m_Width; }
+		uint getHeight() const { return m_Height; }
+		T getValue(uint vXPosition, uint vYPosition) const;
 
-	bool isValid() const;
-	bool isValid(uint i, uint k) const;
-	bool isEmpty(uint i, uint k) const;
-	bool isNoEmpty() const;
+		bool isValid() const;
+		bool isValid(uint vXPosition, uint vYPosition) const;
+		bool isEmpty(uint vXPosition, uint vYPosition) const;
+		bool isNoEmpty() const;
 
-public:
-	/* TODO: Safety Check */
-	T* operator[](uint i) {
-		return m_Data[i];
-	}
+	public:
 
-	const T* operator[](uint i) const {
-		return m_Data[i];
-	}
-
-	CMap& operator=(CMap& m) {
-		if (m_Data != NULL) {
-			delete m_Data;
-			m_Data = NULL;
-		}
-
-		__initSize(m.getSize().first, m.getSize().second);
-
-		for (uint i = 0; i < m_Width; i++) {
-			for (uint k = 0; k < m_Height; k++) {
-				m_Data[i][k] = m[i][k];
+		T* operator[](uint vXPosition) {
+			if (vXPosition >= m_Width) {
+				throw std::out_of_range("Input is not valid");
 			}
+			return m_Data[vXPosition];
 		}
 
-		return *this;
-	}
-
-protected:
-	CMap(uint w, uint h, T v);
-
-	void __release();
-	void __initSize(uint w, uint h);
-	void __initValue(T v);
-
-protected:
-	T**		m_Data;
-	T		m_Empty;
-	uint	m_Width;
-	uint	m_Height;
-};
-
-template<typename T>
-inline CMap<T>::CMap(uint w, uint h, T v)
-	: m_Width(w)
-	, m_Height(h)
-{
-	if (w && h) {
-		__initSize(w, h);
-		__initValue(v);
-	}
-}
-
-template<typename T>
-inline CMap<T>::~CMap() {
-	__release();
-}
-
-template<typename T>
-inline void CMap<T>::setWidth(uint w) {
-	m_Width = w;
-}
-
-template<typename T>
-inline void CMap<T>::setHeight(uint h) {
-	m_Height = h;
-}
-
-template<typename T>
-inline void CMap<T>::setSize(uint w, uint h) {
-	if (m_Width * m_Height != 0) {
-		__release();
-	}
-	__initSize(w, h);
-}
-
-template<typename T>
-inline void CMap<T>::setEmptyValue(T v) {
-	m_Empty = v;
-}
-
-template<typename T>
-inline bool CMap<T>::setValue(uint i, uint k, T v) {
-	_ASSERTE(i < m_Width || k < m_Height);
-	_EARLY_RETURN(i >= m_Width || k >= m_Height, "map set value index invalid.", false);
-
-	m_Data[i][k] = v;
-	return true;
-}
-
-template<typename T>
-inline bool CMap<T>::setEmpty(uint i, uint k) {
-	return setValue(i, k, m_Empty);
-}
-
-template<typename T>
-inline bool CMap<T>::set(const ptr<CMap> m) {
-	_EARLY_RETURN(!m->isValid(), "Input is not valid", false);
-
-	setSize(m->getWidth(), m->getHeight());
-	for (uint i = 0; i < m->getWidth(); i++) {
-		for (uint k = 0; k < m->getHeight(); k++) {
-			m_Data[i][k] = m->getValue(i, k);
+		const T* operator[](uint vXPosition) const {
+			_EARLY_RETURN(vXPosition >= m_Width, "Input is not valid", false);
+			return m_Data[vXPosition];
 		}
-	}
-}
 
-template<typename T>
-inline uint CMap<T>::getEmptyCount() const {
-	uint Count = 0;
-	for (int i = 0; i < m_Width; i++) {
-		for (int k = 0; k < m_Height; k++) {
-			if (isEmpty(i, k)) {
-				Count++;
+		CMap& operator=(CMap& vpM) {
+			if (m_Data != nullptr) {
+				delete[] m_Data;
+				m_Data = nullptr;
 			}
-		}
-	}
-	return Count;
-}
 
-template<typename T>
-inline T CMap<T>::getValue(uint i, uint k) const {
-	return m_Data[i][k];
-}
+			_initSize(vpM.getSize().first, vpM.getSize().second);
 
-template<typename T>
-inline bool CMap<T>::isValid() const {
-	_EARLY_RETURN(m_Width && m_Height == 0, "map invalid: width or height == 0.", false);
-
-	for (uint i = 0; i < m_Width; i++) {
-		for (uint k = 0; k < m_Height; k++) {
-			if (!isValid(i, k)) {
-				return false;
+			for (uint i = 0; i < m_Width; i++) {
+				for (uint k = 0; k < m_Height; k++) {
+					m_Data[i][k] = vpM[i][k];
+				}
 			}
+
+			return *this;
+		}
+
+	protected:
+		CMap(uint vWidth, uint vHeight, T vValue);
+
+		void _release();
+		void _initSize(uint vWidth, uint vHeight);
+		void _initValue(T vValue);
+
+	protected:
+		T** m_Data;
+		T		m_Empty;
+		uint	m_Width;
+		uint	m_Height;
+	};
+
+	template<typename T>
+	inline CMap<T>::CMap(uint vWidth, uint vHeight, T vValue)
+		: m_Width(vWidth)
+		, m_Height(vHeight)
+	{
+		if (vWidth && vHeight) {
+			_initSize(vWidth, vHeight);
+			_initValue(vValue);
 		}
 	}
 
-	return true;
-}
-
-template<typename T>
-inline bool CMap<T>::isValid(uint i, uint k) const {
-	_EARLY_RETURN(i >= m_Width || k >= m_Height, "map index invalid: i or k out of scale.", false);
-
-	if (MathUtil::isNan(m_Data[i][k])) {
-		return false;
+	template<typename T>
+	inline CMap<T>::~CMap() {
+		_release();
 	}
 
-	return true;
-}
+	template<typename T>
+	inline void CMap<T>::setWidth(uint vWidth) {
+		m_Width = vWidth;
+	}
 
-template<typename T>
-inline bool CMap<T>::isEmpty(uint i, uint k) const {
-	_EARLY_RETURN(i >= m_Width || k >= m_Height, "map index invalid: i or k out of scale.", false);
-	_EARLY_RETURN(!isValid(i, k), "map invalid: " + std::to_string(i) + ", " + std::to_string(k), false);
+	template<typename T>
+	inline void CMap<T>::setHeight(uint vHeight) {
+		m_Height = vHeight;
+	}
 
-	if (MathUtil::isEqual(m_Data[i][k], m_Empty)) {
+	template<typename T>
+	inline void CMap<T>::setSize(uint vWidth, uint vHeight) {
+		if (m_Width * m_Height != 0) {
+			_release();
+		}
+		_initSize(vWidth, vHeight);
+	}
+
+	template<typename T>
+	inline void CMap<T>::setEmptyValue(T vValue) {
+		m_Empty = vValue;
+	}
+
+	template<typename T>
+	inline bool CMap<T>::setValue(uint vXPosition, uint vYPosition, T vValue) {
+		_ASSERTE(vXPosition < m_Width && vYPosition < m_Height);
+		_EARLY_RETURN(vXPosition >= m_Width || vYPosition >= m_Height, "map set value index invalid.", false);
+
+		m_Data[vXPosition][vYPosition] = vValue;
 		return true;
 	}
 
-	return false;
-}
+	template<typename T>
+	inline bool CMap<T>::setEmpty(uint vXPosition, uint vYPosition) {
+		return setValue(vXPosition, vYPosition, m_Empty);
+	}
 
-template<typename T>
-inline bool CMap<T>::isNoEmpty() const {
-	_EARLY_RETURN(m_Width && m_Height == 0, "map invalid: width or height == 0.", false);
+	template<typename T>
+	inline bool CMap<T>::set(const ptr<CMap> vpM) {
+		_EARLY_RETURN(!vpM->isValid(), "Input is not valid", false);
 
-	for (uint i = 0; i < m_Width; i++) {
-		for (uint k = 0; k < m_Height; k++) {
-			if (isEmpty(i, k)) {
-				return false;
+		setSize(vpM->getWidth(), vpM->getHeight());
+		for (uint i = 0; i < vpM->getWidth(); i++) {
+			for (uint k = 0; k < vpM->getHeight(); k++) {
+				m_Data[i][k] = vpM->getValue(i, k);
+			}
+		}
+		return true;
+	}
+
+	template<typename T>
+	inline uint CMap<T>::getEmptyCount() const {
+		uint Count = 0;
+		for (uint i = 0; i < m_Width; i++) {
+			for (uint k = 0; k < m_Height; k++) {
+				if (isEmpty(i, k)) {
+					Count++;
+				}
+			}
+		}
+		return Count;
+	}
+
+	template<typename T>
+	inline T CMap<T>::getValue(uint vXPosition, uint vYPosition) const {
+		assert(vXPosition < m_Width && vYPosition < m_Height && "map index invalid: vXPosition or vYPosition out of scale.");
+		return m_Data[vXPosition][vYPosition];
+	}
+
+	template<typename T>
+	inline bool CMap<T>::isValid() const {
+
+
+		for (uint i = 0; i < m_Width; i++) {
+			for (uint k = 0; k < m_Height; k++) {
+				if (!isValid(i, k)) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	template<typename T>
+	inline bool CMap<T>::isValid(uint vXPosition, uint vYPosition) const {
+		_EARLY_RETURN(vXPosition >= m_Width || vYPosition >= m_Height, "map index invalid: vXPosition or vYPosition out of scale.", false);
+
+		if (MathUtil::isNan(m_Data[vXPosition][vYPosition])) {
+			return false;
+		}
+
+		return true;
+	}
+
+	template<typename T>
+	inline bool CMap<T>::isEmpty(uint vXPosition, uint vYPosition) const {
+		_EARLY_RETURN(vXPosition >= m_Width || vYPosition >= m_Height, "map index invalid: vXPosition or vYPosition out of scale.", false);
+		_EARLY_RETURN(!isValid(vXPosition, vYPosition), "map invalid: " + std::to_string(vXPosition) + ", " + std::to_string(vYPosition), false);
+
+		if (MathUtil::isEqual(m_Data[vXPosition][vYPosition], m_Empty)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	template<typename T>
+	inline bool CMap<T>::isNoEmpty() const {
+
+
+		for (uint i = 0; i < m_Width; i++) {
+			for (uint k = 0; k < m_Height; k++) {
+				if (isEmpty(i, k)) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	template<typename T>
+	inline void CMap<T>::_release() {
+		for (uint i = 0; i < m_Width; i++)
+			delete[] m_Data[i];
+		delete[] m_Data;
+		m_Width = 0;
+		m_Height = 0;
+	}
+
+	template<typename T>
+	inline void CMap<T>::_initSize(uint vWidth, uint vHeight) {
+		m_Width = vWidth;
+		m_Height = vHeight;
+
+		m_Data = new T * [vWidth];
+		for (uint i = 0; i < vWidth; i++) {
+			m_Data[i] = new T[vHeight]();
+		}
+	}
+
+	template<typename T>
+	inline void CMap<T>::_initValue(T vValue) {
+		for (uint i = 0; i < m_Width; i++) {
+			for (uint k = 0; k < m_Height; k++) {
+				m_Data[i][k] = vValue;
 			}
 		}
 	}
-
-	return true;
-}
-
-template<typename T>
-inline void CMap<T>::__release() {
-	for (int i = 0; i < m_Width; i++)
-		delete[] m_Data[i];
-	delete[] m_Data;
-	m_Width = 0;
-	m_Height = 0;
-}
-
-template<typename T>
-inline void CMap<T>::__initSize(uint w, uint h) {
-	m_Width = w;
-	m_Height = h;
-
-	m_Data = new T* [w];
-	for (int i = 0; i < w; i++) {
-		m_Data[i] = new T[h]();
-	}
-}
-
-template<typename T>
-inline void CMap<T>::__initValue(T v) {
-	for (int i = 0; i < m_Width; i++) {
-		for (int k = 0; k < m_Height; k++) {
-			m_Data[i][k] = v;
-		}
-	}
-}
 
 }
 

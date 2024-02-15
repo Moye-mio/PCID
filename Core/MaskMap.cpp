@@ -8,12 +8,12 @@ core::CMaskMap::CMaskMap()
 	m_Empty = 255;
 }
 
-core::CMaskMap::CMaskMap(uint w, uint h)
-	: CMap<std::uint8_t>(w, h, 0) {
+core::CMaskMap::CMaskMap(uint vWidth, uint vHeight)
+	: CMap<std::uint8_t>(vWidth, vHeight, 0) {
 	m_Empty = 255;
 }
 
-core::CMaskMap::CMaskMap(uint w, uint h, std::uint8_t v)
-	: CMap<std::uint8_t>(w, h, v) {
+core::CMaskMap::CMaskMap(uint vWidth, uint vHeight, std::uint8_t vValue)
+	: CMap<std::uint8_t>(vWidth, vHeight, vValue) {
 	m_Empty = 255;
 }
