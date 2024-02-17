@@ -22,7 +22,7 @@ namespace core {
 		void setEmptyValue(T vValue);
 		bool setValue(uint vXPosition, uint vYPosition, T vValue);
 		bool setEmpty(uint vXPosition, uint vYPosition);
-		bool set(const ptr<CMap> vpM);
+		bool set(const ptr<CMap> vMap);
 
 		uint getArea() const { return m_Width * m_Height; }
 		uint getEmptyCount() const;
@@ -49,17 +49,17 @@ namespace core {
 			return m_Data[vXPosition];
 		}
 
-		CMap& operator=(CMap& vpM) {
+		CMap& operator=(CMap& vMap) {
 			if (m_Data != nullptr) {
 				delete[] m_Data;
 				m_Data = nullptr;
 			}
 
-			_initSize(vpM.getSize().first, vpM.getSize().second);
+			_initSize(vMap.getSize().first, vMap.getSize().second);
 
 			for (uint i = 0; i < m_Width; i++) {
 				for (uint k = 0; k < m_Height; k++) {
-					m_Data[i][k] = vpM[i][k];
+					m_Data[i][k] = vMap[i][k];
 				}
 			}
 
@@ -134,13 +134,13 @@ namespace core {
 	}
 
 	template<typename T>
-	inline bool CMap<T>::set(const ptr<CMap> vpM) {
-		_EARLY_RETURN(!vpM->isValid(), "Input is not valid", false);
+	inline bool CMap<T>::set(const ptr<CMap> vMap) {
+		_EARLY_RETURN(!vMap->isValid(), "Input is not valid", false);
 
-		setSize(vpM->getWidth(), vpM->getHeight());
-		for (uint i = 0; i < vpM->getWidth(); i++) {
-			for (uint k = 0; k < vpM->getHeight(); k++) {
-				m_Data[i][k] = vpM->getValue(i, k);
+		setSize(vMap->getWidth(), vMap->getHeight());
+		for (uint i = 0; i < vMap->getWidth(); i++) {
+			for (uint k = 0; k < vMap->getHeight(); k++) {
+				m_Data[i][k] = vMap->getValue(i, k);
 			}
 		}
 		return true;

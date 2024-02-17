@@ -15,17 +15,17 @@ bool CPCID::run(const PC_t::Ptr vInput, const PC_t::Ptr vSub, PC_t::Ptr& voOutpu
 	core::CNurbsFitting Fitting;
 	Fitting.setCVSavePath("ControlPts/pts.txt");
 	Fitting.setKnotSavePath("ControlPts/knots.txt");
-	bool r = Fitting.run(vSub, 3, 5, 1);
+	bool Result = Fitting.run(vSub, 3, 5, 1);
 	const auto Fit = Fitting.getFit();
-	_EARLY_RETURN(!r || !Fit, "PCID error: fitting nurbs fails.", false);
+	_EARLY_RETURN(!Result || !Fit, "PCID error: fitting nurbs fails.", false);
 
 	std::vector<SProj> Projs;
-	r = core::CSurfaceUtil::calcProjPoints(Fit, vInput, Projs);
-	_EARLY_RETURN(!r, "PCID error: calc proj points fails.", false);
+	Result = core::CSurfaceUtil::calcProjPoints(Fit, vInput, Projs);
+	_EARLY_RETURN(!Result, "PCID error: calc proj points fails.", false);
 
 	core::CProjManager ProjManager;
-	r = ProjManager.calcDirection(Projs);
-	_EARLY_RETURN(!r, "PCID error: calc proj direction fails.", false);
+	Result = ProjManager.calcDirection(Projs);
+	_EARLY_RETURN(!Result, "PCID error: calc proj direction fails.", false);
 
 	std::vector<vec3f> BriefProjs;
 	__prepareHeightMapData(Projs, BriefProjs);
@@ -69,7 +69,7 @@ bool CPCID::run(const PC_t::Ptr vInput, const PC_t::Ptr vSub, PC_t::Ptr& voOutpu
 	voOutput = __genePointCloud(Fit, pHeightReco, pFilledReco, core::PointCloudUtil::calcAABB(vInput), 2);
 	_EARLY_RETURN(!isPointCloudValid(voOutput), "PCID error: output is not valid.", false);
 
-	r = __removeExcessPoints(vInput, voOutput);
+	Result = __removeExcessPoints(vInput, voOutput);
 	_EARLY_RETURN(!isPointCloudValid(voOutput), "PCID error: output is not valid.", false);
 
 	return true;
@@ -99,8 +99,8 @@ ptr<core::CGradientMap> CPCID::__inpaintImage(const ptr<core::CGradientMap> vRaw
 	cv::Mat ResultImage;
 
 	alg::CImageInpainting Inpainter;
-	bool r = Inpainter.run(GradientImage, MaskImage, ResultImage, alg::PM);
-	_EARLY_RETURN(!r, "PCID error: image inpainting fails.", pFilled);
+	bool Result = Inpainter.run(GradientImage, MaskImage, ResultImage, alg::PM);
+	_EARLY_RETURN(!Result, "PCID error: image inpainting fails.", pFilled);
 
 	pFilled = std::get<1>(core::CMapWrapper::castCVMat2Map(ResultImage));
 	_EARLY_RETURN(!pFilled->isValid(), "PCID error: cast cv mat 2 map fails.", pFilled);
@@ -113,8 +113,8 @@ ptr<core::CHeightMap> CPCID::__solveEquations(const ptr<core::CHeightMap> vInput
 	pFilled->set(vInput);
 
 	core::CSolverBuilder Builder;
-	bool r = Builder.run(vInput, vGog, vGradientFilled);
-	_EARLY_RETURN(!r, "PCID error: solver builder fails.", pFilled);
+	bool Result = Builder.run(vInput, vGog, vGradientFilled);
+	_EARLY_RETURN(!Result, "PCID error: solver builder fails.", pFilled);
 
 	Eigen::MatrixXf Coeff, ConstNumbers, Solutions;
 	Builder.dumpMatrix(Coeff, ConstNumbers);
@@ -142,8 +142,8 @@ PC_t::Ptr CPCID::__genePointCloud(const std::shared_ptr<pcl::on_nurbs::FittingSu
 	core::CHeightMapSampler Sampler;
 	std::vector<vec3f> Samples;
 
-	bool r = Sampler.sample(vInput, vFilled, vPointNumberPerPixel, Samples);
-	_EARLY_RETURN(!r, "PCID error: sample height map fails.", nullptr);
+	bool Result = Sampler.sample(vInput, vFilled, vPointNumberPerPixel, Samples);
+	_EARLY_RETURN(!Result, "PCID error: sample height map fails.", nullptr);
 
 	PC_t::Ptr pNew(new PC_t);
 	for (const vec3f& e : Samples) {
@@ -151,8 +151,8 @@ PC_t::Ptr CPCID::__genePointCloud(const std::shared_ptr<pcl::on_nurbs::FittingSu
 	}
 	std::cout << "PCID: sample " << pNew->size() << " points." << std::endl;
 
-	r = core::PointCloudUtil::calcNormal(pNew, 5);
-	_EARLY_RETURN(!r, "PCID error: new cloud calc normal fails.", nullptr);
+	Result = core::PointCloudUtil::calcNormal(pNew, 5);
+	_EARLY_RETURN(!Result, "PCID error: new cloud calc normal fails.", nullptr);
 
 	for (int i = 0; i < pNew->size(); i++) {
 		auto& p = pNew->at(i);
@@ -186,8 +186,8 @@ ptr<core::CHeightMap> CPCID::__denoiseHeightMap(const ptr<core::CHeightMap> vHei
 
 bool CPCID::__removeExcessPoints(const PC_t::Ptr vInput, PC_t::Ptr& vioFilled) {
 	core::CDuplicateRemover Remover;
-	bool r = Remover.run(vInput, vioFilled, 5);
-	_EARLY_RETURN(!r, "PCID error: remove excess points fails.", false);
+	bool Result = Remover.run(vInput, vioFilled, 5);
+	_EARLY_RETURN(!Result, "PCID error: remove excess points fails.", false);
 
 	return true;
 }

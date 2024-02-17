@@ -44,7 +44,7 @@ bool CDGI::run(const PC_t::Ptr vInput, PC_t::Ptr& voOutput) {
 	voOutput = __genePointCloud(pHeightReco, pFilledReco, core::PointCloudUtil::calcAABB(vInput), 2);
 	_EARLY_RETURN(!isPointCloudValid(voOutput), "DGI run error: output is not valid.", false);
 
-	bool r = __removeExcessPoints(vInput, voOutput);
+	bool Result = __removeExcessPoints(vInput, voOutput);
 	_EARLY_RETURN(!isPointCloudValid(voOutput), "DGI run error: output is not valid.", false);
 
 	return true;
@@ -58,8 +58,8 @@ ptr<core::CGradientMap> CDGI::__inpaintImage(const ptr<core::CGradientMap> vRaw,
 	cv::Mat ResultImage;
 
 	alg::CImageInpainting Inpainter;
-	bool r = Inpainter.run(GradientImage, MaskImage, ResultImage, alg::CV_TEALA);
-	_EARLY_RETURN(!r, "DGI run error: image inpainting fails.", pFilled);
+	bool Result = Inpainter.run(GradientImage, MaskImage, ResultImage, alg::CV_TEALA);
+	_EARLY_RETURN(!Result, "DGI run error: image inpainting fails.", pFilled);
 
 	pFilled = std::get<1>(core::CMapWrapper::castCVMat2Map(ResultImage));
 	_EARLY_RETURN(!pFilled->isValid(), "DGI run error: cast cv mat 2 map fails.", pFilled);
@@ -72,8 +72,8 @@ ptr<core::CHeightMap> CDGI::__solveEquations(const ptr<core::CHeightMap> vInput,
 	pFilled->set(vInput);
 
 	core::CSolverBuilder Builder;
-	bool r = Builder.run(vInput, vGog, vGradientFilled);
-	_EARLY_RETURN(!r, "DGI run error: solver builder fails.", pFilled);
+	bool Result = Builder.run(vInput, vGog, vGradientFilled);
+	_EARLY_RETURN(!Result, "DGI run error: solver builder fails.", pFilled);
 
 	Eigen::MatrixXf Coeff, ConstNumbers, Solutions;
 	Builder.dumpMatrix(Coeff, ConstNumbers);
@@ -101,8 +101,8 @@ PC_t::Ptr CDGI::__genePointCloud(const ptr<core::CHeightMap> vInput, const ptr<c
 	core::CHeightMapSampler Sampler;
 	std::vector<vec3f> Samples;
 
-	bool r = Sampler.sample(vInput, vFilled, vPointNumberPerPixel, Samples);
-	_EARLY_RETURN(!r, "DGI run error: sample fails.", nullptr);
+	bool Result = Sampler.sample(vInput, vFilled, vPointNumberPerPixel, Samples);
+	_EARLY_RETURN(!Result, "DGI run error: sample fails.", nullptr);
 
 	core::CPCMapper Mapper;
 	PC_t::Ptr pCloud = Mapper.map(vBox, Samples);
@@ -113,8 +113,8 @@ PC_t::Ptr CDGI::__genePointCloud(const ptr<core::CHeightMap> vInput, const ptr<c
 
 bool CDGI::__removeExcessPoints(const PC_t::Ptr vRaw, PC_t::Ptr& vioFilled) {
 	core::CDuplicateRemover Remover;
-	bool r = Remover.run(vRaw, vioFilled, 5);
-	_EARLY_RETURN(!r, "DGI run error: remove excess points fails.", false);
+	bool Result = Remover.run(vRaw, vioFilled, 5);
+	_EARLY_RETURN(!Result, "DGI run error: remove excess points fails.", false);
 
 	return true;
 }

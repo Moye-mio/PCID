@@ -28,22 +28,22 @@ bool CNBFM::run(const PC_t::Ptr vCloud) {
 
 		float Scale = 1.0f;
 
-		bool r = core::PointCloudUtil::calcNormal(pWork, 10);
-		_EARLY_RETURN(!r, "nbfm error: voxels calc normal fails", false);
+		bool Result = core::PointCloudUtil::calcNormal(pWork, 10);
+		_EARLY_RETURN(!Result, "nbfm error: voxels calc normal fails", false);
 
 		std::vector<core::SCube> Cubes;
 		core::SAABB Box = core::PointCloudUtil::calcAABB(pWork);
 		core::CCubeSplitter Splitter;
 		float HalfCubeLength = (Box.maxx - Box.minx) / 5 / 2;
-		r = Splitter.run(pWork, vec3f { Box.minx - (it % 2) * HalfCubeLength, Box.miny - (it % 2) * HalfCubeLength, Box.minz - (it % 2) * HalfCubeLength }, HalfCubeLength * 2);
+		Result = Splitter.run(pWork, vec3f { Box.minx - (it % 2) * HalfCubeLength, Box.miny - (it % 2) * HalfCubeLength, Box.minz - (it % 2) * HalfCubeLength }, HalfCubeLength * 2);
 		Splitter.dumpCubes(Cubes);
-		_EARLY_RETURN(!r, "nbfm error: splitter fails", false);
+		_EARLY_RETURN(!Result, "nbfm error: splitter fails", false);
 
 		std::vector<int> Indices;
 		core::CHoleDetector Detector;
-		r = Detector.run(pWork, (Box.maxx - Box.minx) / 30, std::numbers::pi / 2.0f);
+		Result = Detector.run(pWork, (Box.maxx - Box.minx) / 30, std::numbers::pi / 2.0f);
 		Detector.dumpBoundaryIndices(Indices);
-		_EARLY_RETURN(!r, "nbfm error: hole detector fails", false);
+		_EARLY_RETURN(!Result, "nbfm error: hole detector fails", false);
 
 		__maskCubesWithHole(Cubes, Indices);
 
@@ -121,14 +121,14 @@ int CNBFM::__calcNearestCube(const PC_t::Ptr vCloud, const std::vector<core::SCu
 	return SourceId;
 }
 
-void CNBFM::__calcTransform(const PC_t::Ptr vCloud, const core::SCube& t, const core::SCube& s, Eigen::Matrix3f& voRotation, vec3f& voTranslation) {
+void CNBFM::__calcTransform(const PC_t::Ptr vCloud, const core::SCube& vTCubes, const core::SCube& vSCubes, Eigen::Matrix3f& voRotation, vec3f& voTranslation) {
 	float Thres = 0.5f;
 	std::vector<vec3f> CandiInfos;
 
-	for (auto tpid : t.indices) {
+	for (auto tpid : vTCubes.indices) {
 		const auto& p1 = vCloud->at(tpid);
 		pcl::Indices Candidates;
-		for (auto spid : s.indices) {
+		for (auto spid : vSCubes.indices) {
 			const auto& p2 = vCloud->at(spid);
 			if ((p1.normal_x * p2.normal_x + p1.normal_y * p2.normal_y + p1.normal_z * p2.normal_z) > Thres) {
 				Candidates.push_back(spid);
@@ -157,9 +157,9 @@ void CNBFM::__calcTransform(const PC_t::Ptr vCloud, const core::SCube& t, const 
 
 }
 
-PC_t::Ptr CNBFM::__calcTransfromBasedOnICP(const PC_t::Ptr vCloud, const core::SCube& t, const core::SCube& s) {
-	PC_t::Ptr pTarget = core::CubeUtil::extractPtsFromCube(vCloud, t);
-	PC_t::Ptr pSource = core::CubeUtil::extractPtsFromCube(vCloud, s);
+PC_t::Ptr CNBFM::__calcTransfromBasedOnICP(const PC_t::Ptr vCloud, const core::SCube& vTCubes, const core::SCube& vSCubes) {
+	PC_t::Ptr pTarget = core::CubeUtil::extractPtsFromCube(vCloud, vTCubes);
+	PC_t::Ptr pSource = core::CubeUtil::extractPtsFromCube(vCloud, vSCubes);
 	PC_t::Ptr pResult(new PC_t);
 
 	pcl::IterativeClosestPoint<Point_t, Point_t> ICP;
@@ -175,8 +175,8 @@ PC_t::Ptr CNBFM::__calcTransfromBasedOnICP(const PC_t::Ptr vCloud, const core::S
 
 void CNBFM::__mergeNewWorkPointCloud(const PC_t::Ptr vInput, PC_t::Ptr& vioWork) {
 	core::CDuplicateRemover Remover;
-	bool r = Remover.run(vInput, vioWork, 10);
-	_EARLY_RETURN(!r, "nbfm error: remove excess points fails.", );
+	bool Result = Remover.run(vInput, vioWork, 10);
+	_EARLY_RETURN(!Result, "nbfm error: remove excess points fails.", );
 
 	*vioWork += *vInput;
 }
