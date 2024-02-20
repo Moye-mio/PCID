@@ -35,7 +35,9 @@ bool CPCID::run(const PC_t::Ptr vInput, const PC_t::Ptr vSub, PC_t::Ptr& voOutpu
 	_EARLY_RETURN(!pHeight->isValid(), "PCID error: height map is not valid.", false);
 	std::cout << "HeightMap max: " << pHeight->getMax() << ", min: " << pHeight->getMin() << std::endl;
 
-	pHeight = __denoiseHeightMap(pHeight, 10);
+	int DenoiseThres = 10;
+	ptr<core::CHeightMap> pHeightCopy = pHeight;
+	pHeight = __denoiseHeightMap(pHeight, DenoiseThres);
 	_EARLY_RETURN(!pHeight->isValid(), "PCID error: height map is not valid.", false);
 
 	std::cout << "HeightMap max: " << pHeight->getMax() << ", min: " << pHeight->getMin() << std::endl;
@@ -56,6 +58,8 @@ bool CPCID::run(const PC_t::Ptr vInput, const PC_t::Ptr vSub, PC_t::Ptr& voOutpu
 
 	ptr<core::CHeightMap> pHeightFilled = __solveEquations(pHeight, pGradientFilled, pGog);
 	_EARLY_RETURN(!pHeightFilled->isValid() || !pHeightFilled->isNoEmpty(), "PCID error: height filled map is not valid.", false);
+	__recoverHeightMap(pHeightFilled, pHeightCopy);
+	pHeightFilled = pHeightCopy;
 	core::CMapWrapper::saveMapToLocal(pHeightFilled, "Images/Output.png");
 
 	ptr<core::CHeightMap> pHeightReco = HMGenerator.generate(BriefProjs, m_RecoRes, m_RecoRes);
@@ -182,6 +186,29 @@ ptr<core::CHeightMap> CPCID::__denoiseHeightMap(const ptr<core::CHeightMap> vHei
 	std::cout << "height map denoise: from [" << vHeightMap->getWidth() << ", " << vHeightMap->getHeight() << "] to [" << pHeight->getWidth() << ", " << pHeight->getHeight() << "]" << std::endl;
 
 	return pHeight;
+}
+
+void CPCID::__recoverHeightMap(const ptr<core::CHeightMap> vRawHeightMap, ptr<core::CHeightMap>& vioFilledHeightMap) {
+	int Offset = (vioFilledHeightMap->getWidth() - vRawHeightMap->getWidth()) / 2;
+	
+	for (uint i = 0; i < vRawHeightMap->getWidth(); i++) {
+		for (uint k = 0; k < vRawHeightMap->getHeight(); k++) {
+			vioFilledHeightMap->setValue(i + Offset, k + Offset, vRawHeightMap->getValue(i, k));
+		}
+	}
+
+	cv::Mat PartialImage = core::CMapWrapper::castMap2CVMat<float>(vioFilledHeightMap);
+	cv::Mat MaskImage = core::CMapWrapper::castMap2CVMat<std::uint8_t>(core::MapUtil::geneMask<float>(vioFilledHeightMap));
+	cv::Mat CompleteImage;
+
+	alg::CImageInpainting Inpainter;
+	bool r = Inpainter.run(PartialImage, MaskImage, CompleteImage, alg::CV_TEALA);
+	_EARLY_RETURN(!r, "PCID error: partial image inpainting fails.", );
+
+	vioFilledHeightMap = std::get<0>(core::CMapWrapper::castCVMat2Map(CompleteImage));
+	_EARLY_RETURN(!vioFilledHeightMap->isValid(), "PCID error: cast cv mat 2 complete map fails.", );
+
+	std::cout << "PCID: recover image." << std::endl;
 }
 
 bool CPCID::__removeExcessPoints(const PC_t::Ptr vInput, PC_t::Ptr& vioFilled) {

@@ -18,7 +18,7 @@ float CDensityEstimator::run(const PC_t::Ptr vCloud, std::uint32_t k) {
 
 		float Density = 0.0f;
 		for (auto e : Dists) {
-			Density += e;
+			Density += std::sqrtf(e);
 		}
 		GlobalDensity += Density / k;
 	}

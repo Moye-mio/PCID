@@ -31,10 +31,23 @@ using PT_t = pcl::PointCloud<P_t>;
 
 int main() {
 	{
-		const std::string Dir = "data/snowflake/raw/";
+		const std::string HolePath = MAINEXPERIMENT_DIR + std::string("hole/6.ply");
+		const std::string Path = MAINEXPERIMENT_DIR + std::string("Result/6-res.ply");
+		io::CPCLoader Loader;
+		PC_t::Ptr pHole = Loader.loadDataFromFile(HolePath);
+		PC_t::Ptr pInput = Loader.loadDataFromFile(Path);
+
+		core::CDuplicateRemover Remover;
+		Remover.run(pHole, pInput, 5);
+		pcl::io::savePLYFileBinary(MAINEXPERIMENT_DIR + std::string("Result/6-csf.ply"), *pInput);
+	}
+
+	{
+		const std::string Dir = "data/hyperCD/cull/";
 		const std::string FileId[] = { "1.ply","2.ply","3.ply","6.ply" };
 		const std::string HoleDir = MAINEXPERIMENT_DIR + std::string("hole/");
-		const std::string SaveDir = "data/snowflake/afterscale/";
+		const std::string AfterScaleSaveDir = "data/hyperCD/afterscale/";
+		const std::string MergeSaveDir = "data/hyperCD/merge/";
 
 		for (auto e : FileId) {
 			io::CPCLoader Loader;
@@ -46,7 +59,10 @@ int main() {
 			core::CDuplicateRemover Remover;
 			bool r = Remover.run(pHole, pInput, 5);
 
-			pcl::io::savePLYFileBinary(SaveDir + e, *pInput);
+			pcl::io::savePLYFileBinary(AfterScaleSaveDir + e, *pInput);
+
+			*pInput += *pHole;
+			pcl::io::savePLYFileBinary(MergeSaveDir + e, *pInput);
 		}
 	}
 
