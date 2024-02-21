@@ -67,6 +67,9 @@
     <Filter Include="PointCloud\Space\Cube">
       <UniqueIdentifier>{1c37f29b-e006-47bf-88c9-971c6bebea92}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PointCloud\Similarity">
+      <UniqueIdentifier>{afc0b400-2ad9-413a-8654-2b6351289def}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HeightMap.cpp">
@@ -133,6 +136,12 @@
       <Filter>PointCloud\Space\Cube</Filter>
     </ClCompile>
     <ClCompile Include="CubeUtil.cpp" />
+    <ClCompile Include="SimilarityEstimator.cpp">
+      <Filter>PointCloud\Similarity</Filter>
+    </ClCompile>
+    <ClCompile Include="HausdorffDistance.cpp">
+      <Filter>PointCloud\Similarity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HeightMap.h">
@@ -221,6 +230,15 @@
     </ClInclude>
     <ClInclude Include="CubeUtil.h">
       <Filter>PointCloud\Space\Cube</Filter>
+    </ClInclude>
+    <ClInclude Include="SimilarityEstimator.h">
+      <Filter>PointCloud\Similarity</Filter>
+    </ClInclude>
+    <ClInclude Include="HausdorffDistance.h">
+      <Filter>PointCloud\Similarity</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometric_distortion.h">
+      <Filter>PointCloud\Similarity</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

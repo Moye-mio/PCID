@@ -51,8 +51,8 @@ int main() {
 	int WorkResolution = 100;
 	int RecoResolution = 512;
 	PC_t::Ptr pInput(new PC_t), pSub(new PC_t), pOutput(new PC_t);
-	const std::string InputLoadPath = MAINEXPERIMENT_DIR + std::string("hole/6.ply");
-	const std::string SubLoadPath = MAINEXPERIMENT_DIR + std::string("sub/6.ply");
+	const std::string InputLoadPath = MAINEXPERIMENT_DIR + std::string("hole/rw-1.ply");
+	const std::string SubLoadPath = MAINEXPERIMENT_DIR + std::string("sub/rw-1.ply");
 	//const std::string InputLoadPath = LOWFREQUENCY_DIR + std::string("hole.ply");
 	//const std::string SubLoadPath = LOWFREQUENCY_DIR + std::string("sub.ply");
 	const std::string SavePath = "Result/output.ply";

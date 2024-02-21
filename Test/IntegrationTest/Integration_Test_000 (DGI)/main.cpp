@@ -44,10 +44,10 @@
 
 
 int main() {
-	int WorkResolution = 50;
-	int RecoResolution = 200;
+	int WorkResolution = 100;
+	int RecoResolution = 1000;
 	PC_t::Ptr pInput(new PC_t), pOutput(new PC_t);
-	const std::string LoadPath = MAINEXPERIMENT_DIR + std::string("Hole/6.ply");
+	const std::string LoadPath = MAINEXPERIMENT_DIR + std::string("Hole/rw-1.ply");
 	//const std::string LoadPath = LOWFREQUENCY_DIR + std::string("hole.ply");
 	const std::string SavePath = "Result/output.ply";
 

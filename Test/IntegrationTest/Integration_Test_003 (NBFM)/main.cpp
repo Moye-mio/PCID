@@ -20,7 +20,7 @@
 #include "NBFM.h"
 
 int main() {
-	const std::string InputLoadPath = MAINEXPERIMENT_DIR + std::string("hole/6.ply"); 
+	const std::string InputLoadPath = MAINEXPERIMENT_DIR + std::string("hole/2.ply"); 
 	io::CPCLoader Loader;
 	PC_t::Ptr pInput = Loader.loadDataFromFile(InputLoadPath);
 	
