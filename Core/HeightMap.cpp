@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "HeightMap.h"
 #include<optional>
+#include<iostream>
+using namespace std;
 
 using namespace core;
 
@@ -32,26 +34,38 @@ float CHeightMap::getMin() const {
 	return m_Data[Id.first][Id.second];
 }
 
-float CHeightMap::bisample(float vXPosition, float vYPosition) {		/* 0 < i, k < width, height */
-	if (vXPosition > m_Width || vYPosition > m_Height || vXPosition < 0 || vYPosition < 0) {
+float CHeightMap::bisample(float vXPosition, float vYPosition) {		
+	if (vXPosition > m_Width || vYPosition > m_Height) {
 		return m_Empty;
 	}
 
-	int x2 = (int)(std::roundf(vXPosition));
-	int y2 = (int)(std::roundf(vYPosition));
-	int x1 = (x2 == 0) ? 0 : x2 - 1;
-	int y1 = (y2 == 0) ? 0 : y2 - 1;
-	x2 = (x2 == m_Width) ? x2 - 1 : x2;
-	y2 = (y2 == m_Height) ? y2 - 1 : y2;
+	int X1 = vXPosition > 0 ? (int)(vXPosition) : 0;
+	int Y1 = vYPosition > 0 ? (int)(vYPosition) : 0;
+	int X2;
+	if (X1 == m_Width - 1)
+		X2 = X1;
+	else if (vXPosition<0)
+		X2 = 0;
+	else
+		X2 = X1 + 1;
+	int Y2 ;
+	if (Y1 == m_Height - 1)
+		Y2 = Y1;
+	else if (vYPosition<0)
+		Y2 = 0;
+	else
+		Y2 = Y1 + 1;
 
-	float v1 = m_Data[x1][y1];
-	float v2 = m_Data[x2][y1];
-	float v3 = m_Data[x1][y2];
-	float v4 = m_Data[x2][y2];
+	float V1 = m_Data[X1][Y1];
+	float V2 = m_Data[X2][Y1];
+	float V3 = m_Data[X1][Y2];
+	float V4 = m_Data[X2][Y2];
 
-	float r = MathUtil::bilinearInterpolate(v1, v2, v3, v4, -x2 + 0.5f + vXPosition, -y2 + 0.5f + vYPosition);
+	float U = vXPosition?vXPosition - X1:0;
+	float V = vYPosition?vYPosition - Y1:0;
+	float Result = MathUtil::bilinearInterpolate(V1, V2, V3, V4, U, V);
 
-	return r;
+	return Result;
 }
 
 

@@ -15,7 +15,7 @@ bool CSolverBuilder::run(const ptr<CHeightMap> vRaw, const ptr<CGradientMap> vGo
 	m_Raw = vRaw;
 	m_GoG = vGoG;
 	m_Gradient = vGradient;
-	m_Mask = MapUtil::geneMask<float>(m_Raw);
+	m_Mask = MapUtil::GetInstance().geneMask<float>(m_Raw);
 	_EARLY_RETURN(!m_Mask->isValid(), "solver builder error: mask is not valid.", false);
 
 	__init();

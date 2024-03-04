@@ -48,7 +48,7 @@ namespace core {
 			_EARLY_RETURN(vXPosition >= m_Width, "Input is not valid", false);
 			return m_Data[vXPosition];
 		}
-
+		
 		CMap& operator=(CMap& vMap) {
 			if (m_Data != nullptr) {
 				delete[] m_Data;
@@ -79,7 +79,7 @@ namespace core {
 		uint	m_Width;
 		uint	m_Height;
 	};
-
+	
 	template<typename T>
 	inline CMap<T>::CMap(uint vWidth, uint vHeight, T vValue)
 		: m_Width(vWidth)
@@ -95,17 +95,17 @@ namespace core {
 	inline CMap<T>::~CMap() {
 		_release();
 	}
-
+	
 	template<typename T>
 	inline void CMap<T>::setWidth(uint vWidth) {
 		m_Width = vWidth;
 	}
-
+	
 	template<typename T>
 	inline void CMap<T>::setHeight(uint vHeight) {
 		m_Height = vHeight;
 	}
-
+	
 	template<typename T>
 	inline void CMap<T>::setSize(uint vWidth, uint vHeight) {
 		if (m_Width * m_Height != 0) {
@@ -130,6 +130,8 @@ namespace core {
 
 	template<typename T>
 	inline bool CMap<T>::setEmpty(uint vXPosition, uint vYPosition) {
+		_ASSERTE(vXPosition < m_Width || vYPosition < m_Height);
+		_EARLY_RETURN(vXPosition >= m_Width || vYPosition >= m_Height, "map set empty invalid.", false);
 		return setValue(vXPosition, vYPosition, m_Empty);
 	}
 

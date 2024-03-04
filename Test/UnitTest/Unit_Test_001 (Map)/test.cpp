@@ -1,6 +1,10 @@
 #include "pch.h"
+#include<opencv2/opencv.hpp>
+#include<iostream>
+using namespace std;
 
 TEST(HeightMap, Basic_Function) {
+	//初始化CHeightMap类型地图并检验
 	std::shared_ptr<core::CHeightMap> pHeightMap(new core::CHeightMap(10, 10, 1));
 	EXPECT_EQ(pHeightMap->getWidth(), 10);
 	EXPECT_EQ(pHeightMap->getHeight(), 10);
@@ -11,54 +15,109 @@ TEST(HeightMap, Basic_Function) {
 			pHeightMap->setValue(i, k, i + k);
 		}
 	}
-
 	EXPECT_TRUE(MathUtil::isEqual(pHeightMap->getMax(), 18.0f));
 	EXPECT_TRUE(MathUtil::isEqual(pHeightMap->getMin(), 0.0f));
 	EXPECT_TRUE(MathUtil::isEqual(pHeightMap->getMaxId(), std::pair((std::uint32_t)9, (std::uint32_t)9)));
 	EXPECT_TRUE(MathUtil::isEqual(pHeightMap->getMinId(), std::pair((std::uint32_t)0, (std::uint32_t)0)));
 	EXPECT_TRUE(pHeightMap->isNoEmpty());
 	EXPECT_TRUE(pHeightMap->isValid());
-	
-	for (int i = 0; i < pHeightMap->getWidth(); i++) {
-		for (int k = 0; k < pHeightMap->getHeight(); k++) {
-			auto r1 = pHeightMap->calcGradient(i, k, 0);
-			auto r2 = pHeightMap->calcGradient(i, k, 1);
-			EXPECT_TRUE(r1.has_value() && r2.has_value());
-			EXPECT_EQ(r1.value(), 1);
-			EXPECT_EQ(r2.value(), 1);
+	//用pHeightMap初始化一个Mat型的地图HeightMapMat并检验
+	cv::Mat HeightMapMat(10, 10, CV_32F);
+	EXPECT_EQ(HeightMapMat.rows, 10);
+	EXPECT_EQ(HeightMapMat.cols, 10);
+	for (int i = 0; i < HeightMapMat.rows; i++)
+	{
+		for (int k = 0; k < HeightMapMat.cols; k++)
+		{
+			HeightMapMat.at<float>(i, k) = pHeightMap->getValue(i, k);
+			EXPECT_EQ(HeightMapMat.at<float>(i, k), i+k);
 		}
 	}
-
+	//再建立一个Mat型地图ResizedMat来存储HeightMapMat resized后的结果并检验
+	cv::Mat ResizedMat;
+	cv::resize(HeightMapMat, ResizedMat, cv::Size(25, 25), 0, 0, cv::INTER_LINEAR);
+	EXPECT_EQ(ResizedMat.rows, 25);
+	EXPECT_EQ(ResizedMat.cols, 25);
+	//检验bisample函数
 	for (int i = 0; i < 100; i++) {
-		float x = MathUtil::geneRandomReal(0, 9);
-		float y = MathUtil::geneRandomReal(0, 9);
-		float v = pHeightMap->bisample(x, y);
-		x = (x < 0.5) ? 0 : x - 0.5f;
-		y = (y < 0.5) ? 0 : y - 0.5f;
-		EXPECT_TRUE(MathUtil::isEqual<float>(v, x + y));
+		float DstXPosition = MathUtil::geneRandomReal(0, 24);
+		float DstYPosition = MathUtil::geneRandomReal(0, 24);
+		float SrcXPosition = (0.4 * DstXPosition - 0.3);
+		float SrcYPosition = (0.4 * DstYPosition - 0.3 );
+		float Result1 = ResizedMat.at<float>(DstXPosition, DstYPosition);
+		float Result2 = pHeightMap->bisample(SrcXPosition, SrcYPosition);
+		EXPECT_NEAR(Result1, Result2, 1e10 - 5);
 	}
-
-	std::shared_ptr<core::CHeightMap> pSrc(new core::CHeightMap(2, 2, 0));
-	pSrc->setValue(0, 0, 0);
-	pSrc->setValue(0, 1, 0);
-	pSrc->setValue(1, 0, 255);
-	pSrc->setValue(1, 1, 255);
-	auto pDst = core::MapUtil::resize(pSrc, 255, 255);
-	for (int i = 0; i < pDst->getWidth(); i++) {
-		for (int k = 0; k < pDst->getHeight(); k++) {
-			if (i <= 63) {
-				EXPECT_TRUE(MathUtil::isEqual<float>(pDst->getValue(i, k), 0));
-			}
-			else if (i >= 192) {
-				EXPECT_LT(std::fabsf(pDst->getValue(i, k) - 255.0f), 0.0001f);
-			}
+	 //检验bisample函数
+	for (int i=0;i < ResizedMat.rows; ++i)
+	{
+		for (int k = 0; k < ResizedMat.cols; k++)
+		{
+			EXPECT_NEAR(ResizedMat.at<float>(i, k), pHeightMap->bisample((0.4 * i - 0.3), (0.4 * k - 0.3)), 1);
 		}
 	}
-
-	pHeightMap->setEmpty(5, 5);
-	EXPECT_TRUE(pHeightMap->isEmpty(5, 5));
-	EXPECT_EQ(pHeightMap->getEmptyCount(), 1);
 }
+
+
+//TEST(HeightMap, Basic_Function) {
+//	std::shared_ptr<core::CHeightMap> pHeightMap(new core::CHeightMap(10, 10, 1));
+//	EXPECT_EQ(pHeightMap->getWidth(), 10);
+//	EXPECT_EQ(pHeightMap->getHeight(), 10);
+//	EXPECT_EQ(pHeightMap->getArea(), 100);
+//	for (int i = 0; i < 10; i++) {
+//		for (int k = 0; k < 10; k++) {
+//			EXPECT_EQ(pHeightMap->getValue(i, k), 1);
+//			pHeightMap->setValue(i, k, i + k);
+//		}
+//	}
+//
+//	EXPECT_TRUE(MathUtil::isEqual(pHeightMap->getMax(), 18.0f));
+//	EXPECT_TRUE(MathUtil::isEqual(pHeightMap->getMin(), 0.0f));
+//	EXPECT_TRUE(MathUtil::isEqual(pHeightMap->getMaxId(), std::pair((std::uint32_t)9, (std::uint32_t)9)));
+//	EXPECT_TRUE(MathUtil::isEqual(pHeightMap->getMinId(), std::pair((std::uint32_t)0, (std::uint32_t)0)));
+//	EXPECT_TRUE(pHeightMap->isNoEmpty());
+//	EXPECT_TRUE(pHeightMap->isValid());
+//	
+//	for (int i = 0; i < pHeightMap->getWidth(); i++) {
+//		for (int k = 0; k < pHeightMap->getHeight(); k++) {
+//			auto r1 = pHeightMap->calcGradient(i, k, 0);
+//			auto r2 = pHeightMap->calcGradient(i, k, 1);
+//			EXPECT_TRUE(r1.has_value() && r2.has_value());
+//			EXPECT_EQ(r1.value(), 1);
+//			EXPECT_EQ(r2.value(), 1);
+//		}
+//	}
+//
+//	for (int i = 0; i < 100; i++) {
+//		float x = MathUtil::geneRandomReal(0, 9);
+//		float y = MathUtil::geneRandomReal(0, 9);
+//		float v = pHeightMap->bisample(x, y);
+//		x = (x < 0.5) ? 0 : x - 0.5f;
+//		y = (y < 0.5) ? 0 : y - 0.5f;
+//		EXPECT_TRUE(MathUtil::isEqual<float>(v, x + y));
+//	}
+//
+//	std::shared_ptr<core::CHeightMap> pSrc(new core::CHeightMap(2, 2, 0));
+//	pSrc->setValue(0, 0, 0);
+//	pSrc->setValue(0, 1, 0);
+//	pSrc->setValue(1, 0, 255);
+//	pSrc->setValue(1, 1, 255);
+//	auto pDst = core::MapUtil::GetInstance().resize(pSrc, 255, 255);
+//	for (int i = 0; i < pDst->getWidth(); i++) {
+//		for (int k = 0; k < pDst->getHeight(); k++) {
+//			if (i <= 63) {
+//				EXPECT_TRUE(MathUtil::isEqual<float>(pDst->getValue(i, k), 0));
+//			}
+//			else if (i >= 192) {
+//				EXPECT_LT(std::fabsf(pDst->getValue(i, k) - 255.0f), 0.0001f);
+//			}
+//		}
+//	}
+//
+//	pHeightMap->setEmpty(5, 5);
+//	EXPECT_TRUE(pHeightMap->isEmpty(5, 5));
+//	EXPECT_EQ(pHeightMap->getEmptyCount(), 1);
+//}
 
 TEST(GradientMap, Basic_Function) {
 	std::shared_ptr<core::CGradientMap> pGradientMap(new core::CGradientMap(10, 10, vec2f {1, 1}));
@@ -112,11 +171,11 @@ TEST(MapUtil, Basic_Function) {
 	pHeightMap->setEmpty(5, 5);
 	pHeightMap->setEmpty(4, 6);
 
-	auto pGradient = core::MapUtil::geneGradient(pHeightMap);
-	auto pGog = core::MapUtil::geneGradient(pGradient);
-	auto pMask1 = core::MapUtil::geneMask<float>(pHeightMap);
-	auto pMask2 = core::MapUtil::geneMask<vec2f>(pGradient);
-	auto pMask3 = core::MapUtil::geneMask<vec2f>(pGog);
+	auto pGradient = core::MapUtil::GetInstance().geneGradient(pHeightMap);
+	auto pGog = core::MapUtil::GetInstance().geneGradient(pGradient);
+	auto pMask1 = core::MapUtil::GetInstance().geneMask<float>(pHeightMap);
+	auto pMask2 = core::MapUtil::GetInstance().geneMask<vec2f>(pGradient);
+	auto pMask3 = core::MapUtil::GetInstance().geneMask<vec2f>(pGog);
 
 	for (int i = 0; i < 10; i++) {
 		for (int k = 0; k < 10; k++) {

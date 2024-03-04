@@ -198,7 +198,7 @@ void CPCID::__recoverHeightMap(const ptr<core::CHeightMap> vRawHeightMap, ptr<co
 	}
 
 	cv::Mat PartialImage = core::CMapWrapper::castMap2CVMat<float>(vioFilledHeightMap);
-	cv::Mat MaskImage = core::CMapWrapper::castMap2CVMat<std::uint8_t>(core::MapUtil::geneMask<float>(vioFilledHeightMap));
+	cv::Mat MaskImage = core::CMapWrapper::castMap2CVMat<std::uint8_t>(core::MapUtil::GetInstance().geneMask<float>(vioFilledHeightMap));
 	cv::Mat CompleteImage;
 
 	alg::CImageInpainting Inpainter;
