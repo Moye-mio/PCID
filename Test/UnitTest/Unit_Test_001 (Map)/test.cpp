@@ -40,8 +40,8 @@ TEST(HeightMap, Basic_Function) {
 	EXPECT_EQ(ResizedMat.cols, 25);
 	//¼ìÑébisampleº¯Êý
 	for (int i = 0; i < 100; i++) {
-		float DstXPosition = MathUtil::geneRandomReal(0, 24);
-		float DstYPosition = MathUtil::geneRandomReal(0, 24);
+		int DstXPosition = MathUtil::geneRandomReal(0, 24);
+		int DstYPosition = MathUtil::geneRandomReal(0, 24);
 		float SrcXPosition = (0.4 * DstXPosition - 0.3);
 		float SrcYPosition = (0.4 * DstYPosition - 0.3 );
 		float Result1 = ResizedMat.at<float>(DstXPosition, DstYPosition);
