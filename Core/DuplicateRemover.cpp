@@ -20,7 +20,7 @@ bool CDuplicateRemover::run(const PC_t::Ptr vRefer, PC_t::Ptr& vioResult, std::u
 		std::vector<float> Dists;
 		pTree->nearestKSearch(vioResult->at(i), k + 1, Indices, Dists);
 		
-		if (Dists[0] > Density) {
+		if (Dists[0] > Density * 3) {
 			pNew->emplace_back(vioResult->at(i));
 		}
 	}

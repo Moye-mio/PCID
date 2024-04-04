@@ -52,9 +52,10 @@ bool CPoissonImageInpainting::run(const cv::Mat& vSrc, const cv::Mat& vMask, cv:
 	switch (vMode) {
 	case EPoissonGradient::PM:
 	{
-		CMixInpainting Inpainter;
+		/*CMixInpainting Inpainter;
 		Inpainter.setDistThres(0);
-		Inpainter.run(GradientImage, MaskImage, GradientResult);
+		Inpainter.run(GradientImage, MaskImage, GradientResult);*/
+		GradientResult = PM::run(GradientImage, MaskImage, 11);
 		break;
 	}
 	case EPoissonGradient::MIX:

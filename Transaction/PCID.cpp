@@ -53,7 +53,7 @@ bool CPCID::run(const PC_t::Ptr vInput, const PC_t::Ptr vSub, PC_t::Ptr& voOutpu
 	_EARLY_RETURN(!pHeight->isValid(), "PCID error: height map is not valid.", false);
 	std::cout << "HeightMap max: " << pHeight->getMax() << ", min: " << pHeight->getMin() << std::endl;
 
-	int DenoiseThres = 20;
+	int DenoiseThres = (m_WorkRes > 50) ? 15 : 5;
 	ptr<core::CHeightMap> pHeightCopy = pHeight;
 	pHeight = __denoiseHeightMap(pHeight, DenoiseThres);
 	_EARLY_RETURN(!pHeight->isValid(), "PCID error: height map is not valid.", false);
@@ -92,7 +92,7 @@ bool CPCID::run(const PC_t::Ptr vInput, const PC_t::Ptr vSub, PC_t::Ptr& voOutpu
 	_EARLY_RETURN(!pFilledReco->isValid(), "PCID error: FilledReco map is not valid.", false);
 	core::CMapWrapper::saveMapToLocal(pFilledReco, "Images/OutputReco.png");
 
-	voOutput = __genePointCloud(Fit, pHeightReco, pFilledReco, core::PointCloudUtil::calcAABB(vInput), 10);
+	voOutput = __genePointCloud(Fit, pHeightReco, pFilledReco, core::PointCloudUtil::calcAABB(vInput), 1);
 	_EARLY_RETURN(!isPointCloudValid(voOutput), "PCID error: output is not valid.", false);
 
 	r = __removeExcessPoints(vInput, voOutput);
@@ -140,7 +140,7 @@ ptr<core::CHeightMap> CPCID::__inpaintImageByPoisson(const ptr<core::CHeightMap>
 	cv::Mat Res;
 
 	alg::CPoissonImageInpainting Inpainter;
-	Inpainter.run(Raw, Mask, Res, alg::EPoissonGradient::MIX);
+	Inpainter.run(Raw, Mask, Res, alg::EPoissonGradient::PM);
 
 	return std::get<0>(core::CMapWrapper::castCVMat2Map(Res));
 }
@@ -195,7 +195,7 @@ PC_t::Ptr CPCID::__genePointCloud(const std::shared_ptr<pcl::on_nurbs::FittingSu
 		auto& p = pNew->at(i);
 		Eigen::Vector3f Normal { p.normal_x, p.normal_y, p.normal_z };
 		Eigen::Vector3f Dist = Normal * Samples[i].z;
-		std::cout << "Dist: [" << Normal[0] << ", " << Normal[1] << ", " << Normal[2] << "] * " << Samples[i].z << " = [" << Dist[0] << ", " << Dist[1] << ", " << Dist[2] << "]" << std::endl;
+		//std::cout << "Dist: [" << Normal[0] << ", " << Normal[1] << ", " << Normal[2] << "] * " << Samples[i].z << " = [" << Dist[0] << ", " << Dist[1] << ", " << Dist[2] << "]" << std::endl;
 		p.x += Dist[0];
 		p.y += Dist[1];
 		p.z += Dist[2];
@@ -248,6 +248,18 @@ bool CPCID::__removeExcessPoints(const PC_t::Ptr vInput, PC_t::Ptr& vioFilled) {
 	core::CDuplicateRemover Remover;
 	bool r = Remover.run(vInput, vioFilled, 5);
 	_EARLY_RETURN(!r, "PCID error: remove excess points fails.", false);
+
+	core::SAABB Box = core::PointCloudUtil::calcAABB(vInput);
+	PC_t::Ptr pNew(new PC_t);
+	for (auto& p : *vioFilled) {
+		if (p.x < Box.minx || p.x > Box.maxx || p.y < Box.miny || p.y > Box.maxy || p.z < Box.minz || p.z > Box.maxz) {
+			//
+		}
+		else {
+			pNew->emplace_back(p);
+		}
+	}
+	vioFilled = pNew;
 
 	return true;
 }

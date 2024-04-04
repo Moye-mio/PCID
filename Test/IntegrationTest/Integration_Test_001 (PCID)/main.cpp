@@ -46,33 +46,58 @@
 /* DGI */
 #include "PCID.h"
 
+struct SFitPara {
+	int d;
+	int r;
+	int it;
+};
+
+struct SRes {
+	int work;
+	int reco;
+};
+
 
 int main() {
-	int WorkResolution = 100;
-	int RecoResolution = 512;
+	SFitPara Para { 3, 5, 10 };
+	SRes Res { 100, 300 };
 	PC_t::Ptr pInput(new PC_t), pSub(new PC_t), pOutput(new PC_t);
-	const std::string InputLoadPath = MAINEXPERIMENT_DIR + std::string("hole/rw-1.ply");
-	const std::string SubLoadPath = MAINEXPERIMENT_DIR + std::string("sub/rw-1.ply");
-	//const std::string InputLoadPath = LOWFREQUENCY_DIR + std::string("hole.ply");
-	//const std::string SubLoadPath = LOWFREQUENCY_DIR + std::string("sub.ply");
-	const std::string SavePath = "Result/output.ply";
 
-	io::CPCLoader Loader;
-	pInput = Loader.loadDataFromFile(InputLoadPath);
-	pSub = Loader.loadDataFromFile(SubLoadPath);
+	std::vector<std::string> FileIndices;
+	FileIndices.push_back("1");
+	//FileIndices.push_back("2");
+	//FileIndices.push_back("3");
+	//FileIndices.push_back("6");
 
-	CPCID PCID;
-	PCID.setResolution(WorkResolution, RecoResolution);
-	bool r = PCID.run(pInput, pSub, pOutput);
+	for (const std::string& Id : FileIndices) {
+		if (Id == "6") {
+			Res = { 100, 300 };
+		}
 
-	if (r == false) {
-		log("PCID error.");
+		const std::string InputLoadPath = MAINEXPERIMENT_DIR + std::string("Hole/" + Id + ".ply");
+		const std::string SubLoadPath = MAINEXPERIMENT_DIR + std::string("sub/" + Id + ".ply");
+		const std::string SavePath = "Result/" + Id + ".ply";
+
+		io::CPCLoader Loader;
+		pInput = Loader.loadDataFromFile(InputLoadPath);
+		pSub = Loader.loadDataFromFile(SubLoadPath);
+
+		CPCID PCID;
+		PCID.setResolution(Res.work, Res.reco);
+		PCID.setFitPara(Para.d, Para.r, Para.it);
+		bool r = PCID.run(pInput, pSub, pOutput);
+
+		if (r == false) {
+			log("PCID error.");
+		}
+		else {
+			log("PCID succeeds.");
+		}
+
+		*pOutput += *pInput;
+
+		pcl::io::savePLYFileBinary(SavePath, *pOutput);
 	}
-	else {
-		log("PCID succeeds.");
-	}
-
-	pcl::io::savePLYFileBinary(SavePath, *pOutput);
 
 	return 0;
 }
