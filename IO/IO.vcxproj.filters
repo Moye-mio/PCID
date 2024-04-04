@@ -25,6 +25,7 @@
       <Filter>Load</Filter>
     </ClInclude>
     <ClInclude Include="IOCommon.h" />
+    <ClInclude Include="IOInterface.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

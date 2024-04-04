@@ -12,12 +12,16 @@ struct SProj;
 class CPCID {
 public:
 
+	CPCID();
+
+	bool setFitPara(uint d, uint r, uint it);
 	bool setResolution(uint vWorkRes, uint vRecoRes);
 	bool run(const PC_t::Ptr vInput, const PC_t::Ptr vSub, PC_t::Ptr& voOutput);
 
 private:
 	void __prepareHeightMapData(const std::vector<SProj>& vProjs, std::vector<vec3f>& voBriefProjs);
 	ptr<core::CGradientMap> __inpaintImage(const ptr<core::CGradientMap> vRaw, const ptr<core::CMaskMap> vMask);
+	ptr<core::CHeightMap> __inpaintImageByPoisson(const ptr<core::CHeightMap> vRaw, const ptr<core::CMaskMap> vMask);
 	ptr<core::CHeightMap> __solveEquations(const ptr<core::CHeightMap> vInput, const ptr<core::CGradientMap> vGradientFilled, const ptr<core::CGradientMap> vGog);
 	PC_t::Ptr __genePointCloud(const std::shared_ptr<pcl::on_nurbs::FittingSurface> vFit, const ptr<core::CHeightMap> vInput, const ptr<core::CHeightMap> vFilled, const core::SAABB& vBox, int vPointNumberPerPixel);
 	ptr<core::CHeightMap> __denoiseHeightMap(const ptr<core::CHeightMap> vHeightMap, uint vThres);
@@ -27,5 +31,7 @@ private:
 private:
 	uint m_WorkRes;				/* resolution for image inpainting */
 	uint m_RecoRes;				/* resolution for reconstruction */
-
+	uint m_Degree;
+	uint m_RefineMent;
+	uint m_Iter;
 };

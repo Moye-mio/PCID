@@ -13,6 +13,7 @@ public:
 	float getMax() const;
 	float getMin() const;
 	float bisample(float i, float k);
+	float bisample2(float i, float k);
 	std::pair<uint, uint> getMaxId() const;
 	std::pair<uint, uint> getMinId() const;
 

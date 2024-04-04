@@ -145,6 +145,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
+    <ClInclude Include="IOInterface.hpp" />
     <ClInclude Include="IOCommon.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PCLoader.h" />

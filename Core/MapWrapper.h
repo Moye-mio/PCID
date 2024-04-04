@@ -2,6 +2,7 @@
 
 #include "HeightMap.h"
 #include "GradientMap.h"
+#include "MapUtil.h"
 
 namespace core {
 
@@ -20,7 +21,7 @@ public:
 	template <>
 	static cv::Mat castMap2CVMat<std::uint8_t>(const std::shared_ptr<CMap<std::uint8_t>> vMap);
 
-	static void saveMapToLocal(const ptr<CHeightMap> m, const std::string& vPath) {
+	static void saveMapToLocal(const ptr<CHeightMap> m, const std::string& vPath, bool isNormalize = true) {
 		_EARLY_RETURN(m->isValid() == false, "save map error: map is invalid.", );
 
 		cv::Mat Image(m->getWidth(), m->getHeight(), CV_32FC1);
@@ -31,9 +32,24 @@ public:
 		}
 
 		cv::Mat SaveImage(Image.size(), CV_8UC1);
-		float Scale = 255.0f / (m->getMax() - m->getMin());
-		Image.convertTo(SaveImage, CV_8UC1, Scale, -m->getMin() * Scale);
+		if (isNormalize) {
+			float Scale = 255.0f / (m->getMax() - m->getMin());
+			Image.convertTo(SaveImage, CV_8UC1, Scale, -m->getMin() * Scale);
+		}
+		else {
+			Image.convertTo(SaveImage, CV_8UC1, 1, 0);
+		}
 		cv::imwrite(vPath, SaveImage);
+	}
+
+	static void saveGMapToLocal(const ptr<CGradientMap> m, const std::string& vPath) {
+		_EARLY_RETURN(m->isValid() == false, "save map error: map is invalid.", );
+		
+		auto p1 = MapUtil::getHeightMapFromGradientMap(m, 0);
+		auto p2 = MapUtil::getHeightMapFromGradientMap(m, 1);
+
+		saveMapToLocal(p1, vPath + "-x.png", false);
+		saveMapToLocal(p2, vPath + "-y.png", false);
 	}
 
 	static std::variant<std::shared_ptr<CHeightMap>, std::shared_ptr<CGradientMap>, std::shared_ptr<CMaskMap>> castCVMat2Map(const cv::Mat& vImage) {

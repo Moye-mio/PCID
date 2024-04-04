@@ -18,6 +18,9 @@
 /* BOOST */
 #include <boost/format.hpp>
 
+/* OPENCV */
+#include <opencv2/opencv.hpp>
+
 /* COMMON */
 #include "Common.h"
 #include "magic_enum.hpp"
@@ -30,3 +33,4 @@
 #include "SparseLinearSolver.h"
 #include "SolverBuilder.h"
 #include "EigenUtil.h"
+#include "MapWrapper.h"

@@ -113,7 +113,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Common;$(SolutionDir)\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -132,7 +132,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Common;$(SolutionDir)\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -143,20 +143,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AlgCommon.h" />
+    <ClInclude Include="CVInpainting.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ImageInpainting.h" />
     <ClInclude Include="ImageUtil.h" />
     <ClInclude Include="Inpaint.h" />
     <ClInclude Include="MeanShift.h" />
+    <ClInclude Include="MixInpainting.h" />
     <ClInclude Include="PatchMatch.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PMInterface.h" />
+    <ClInclude Include="PoissonImageInpainting.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CVInpainting.cpp" />
     <ClCompile Include="ImageInpainting.cpp" />
     <ClCompile Include="ImageUtil.cpp" />
     <ClCompile Include="Inpaint.cpp" />
     <ClCompile Include="MeanShift.cpp" />
+    <ClCompile Include="MixInpainting.cpp" />
     <ClCompile Include="PatchMatch.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -165,10 +171,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="PMInterface.cpp" />
+    <ClCompile Include="PoissonImageInpainting.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">
       <Project>{73bfb3ec-8888-44a7-a0a5-68b8df5262ff}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\Core.vcxproj">
+      <Project>{3fa44782-bcc0-4834-aee2-4a5dfb2a6cb0}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

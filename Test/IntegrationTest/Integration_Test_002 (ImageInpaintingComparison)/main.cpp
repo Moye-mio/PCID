@@ -1,44 +1,18 @@
-
-#include <vector>
-#include <string>
-#include <map>
-#include <algorithm>
-#include <unordered_map>
-#include <unordered_set>
-#include <cstdlib>
-#include <variant>
-
-/* BOOST */
-#include <boost/format.hpp>
-
-/* CV */
-#include <opencv2/opencv.hpp>
-
-/* COMMON */
-#include "Common.h"
-
-/* ALG */
-#include "ImageInpainting.h"
-#include "ImageUtil.h"
+#include "header.h"
 
 int main() {
 
-	const std::string ImagePath = IMAGEINPAINTING_DIR + std::string("4/hole.png");
+	const std::string ImagePath = "Images/gt.png";
+	const std::string MaskPath = "Images/mask.png";
 	cv::Mat Input = cv::imread(ImagePath, cv::IMREAD_GRAYSCALE);
-	cv::Mat Mask(Input.size(), CV_8UC1);
+	cv::Mat Mask = cv::imread(MaskPath, cv::IMREAD_GRAYSCALE);
 	
-	for (int i = 0; i < Input.rows; i++) {
-		for (int k = 0; k < Input.cols; k++) {
-			if (Input.at<uchar>(i, k) == 0) {
-				Mask.at<uchar>(i, k) = 255;
-			}
-			else {
-				Mask.at<uchar>(i, k) = 0;
-			}
-		}
+	for (int i = 0; i < magic_enum::enum_count<alg::EInpaintMode>(); i++) {
+		cv::Mat Result;
+		alg::CImageInpainting Inpainter;
+		Inpainter.run(Input, Mask, Result, static_cast<alg::EInpaintMode>(i));
+		cv::imwrite("Images/res-" + std::to_string(i) + ".png", Result);
 	}
-
-	cv::imwrite("3-mask.png", Mask);
 
 	return 0;
 }

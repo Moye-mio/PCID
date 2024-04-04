@@ -129,7 +129,7 @@ TEST(MapUtil, Basic_Function) {
 				EXPECT_FALSE(pMask1->isEmpty(i, k));
 				EXPECT_FALSE(pMask2->isEmpty(i, k));
 				EXPECT_FALSE(pMask3->isEmpty(i, k));
-				EXPECT_TRUE(MathUtil::isEqual(pGradient->getValue(i, k), vec2f { 1, 2 }));
+				EXPECT_TRUE(MathUtil::isEqual(pGradient->getValue(i, k), vec2f { 2, 1 }));
 				EXPECT_TRUE(MathUtil::isEqual(pGog->getValue(i, k), vec2f { 0, 0 }));
 			}
 		}

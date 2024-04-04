@@ -9,7 +9,8 @@ TEST(Surface, NT_LoadCloud) {
 
 	core::CNurbsFitting Fitting;
 	Fitting.setCVSavePath("ControlPoints/pts.txt");
-	EXPECT_TRUE(Fitting.run(pCloud, 3, 5, 1));
+	Fitting.setKnotSavePath("ControlPoints/knots.txt");
+	EXPECT_TRUE(Fitting.run(pCloud, 3, 2, 1));
 }
 
 

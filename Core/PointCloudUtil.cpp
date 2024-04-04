@@ -175,6 +175,14 @@ void PointCloudUtil::normalizeByReference(const PC_t::Ptr vioCloud, const PC_t::
 	}
 }
 
+void PointCloudUtil::scale(const PC_t::Ptr vioCloud, float vScale) {
+	for (auto& p : *vioCloud) {
+		p.x *= vScale;
+		p.y *= vScale;
+		p.z *= vScale;
+	}
+}
+
 void PointCloudUtil::extractXYZpt(const PC_t::Ptr& vCloud, const PT_t::Ptr& voPts) {
 	if (voPts->size()) {
 		voPts->clear();

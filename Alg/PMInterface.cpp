@@ -18,15 +18,13 @@ cv::Mat PM::run(const cv::Mat& vRaw, const cv::Mat& vMask, int vPatchSize /*= 11
 	cv::Mat Result = vRaw.clone();
 	if (vRaw.type() == 5)		// CV_32FC1
 	{
-		CInpainter Inpainter(vRaw, vMask, vPatchSize);
-		cv::VideoWriter VideoWriter("PM.avi", cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 25.0, cv::Size(vRaw.cols, vRaw.rows));
-		Inpainter.inpaint(VideoWriter);
+		CInpainter Inpainter(vRaw, vMask, vPatchSize, 3, 2);
+		Inpainter.inpaint();
 		Inpainter.dumpResult(Result);
-		VideoWriter.release();
 	}
 	else if (vRaw.type() == 13)	// CV_32FC2
 	{
-		CInpainter Inpainter(vRaw, vMask, vPatchSize);
+		CInpainter Inpainter(vRaw, vMask, vPatchSize, 3, 2);
 		Inpainter.inpaint();
 		Inpainter.dumpResult(Result);
 	}
@@ -38,7 +36,7 @@ cv::Mat PM::run(const cv::Mat& vRaw, const cv::Mat& vMask, int vPatchSize /*= 11
 				Raw.at<float>(i, k) = float(vRaw.at<uchar>(i, k));
 			}
 		}
-		CInpainter Inpainter(Raw, vMask, vPatchSize);
+		CInpainter Inpainter(Raw, vMask, vPatchSize, 3, 2);
 		Inpainter.inpaint();
 		Inpainter.dumpResult(TempRes);
 		

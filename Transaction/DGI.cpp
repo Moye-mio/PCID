@@ -41,7 +41,7 @@ bool CDGI::run(const PC_t::Ptr vInput, PC_t::Ptr& voOutput) {
 	_EARLY_RETURN(!pFilledReco->isValid(), "DGI run error: FilledReco map is not valid.", false);
 	core::CMapWrapper::saveMapToLocal(pFilledReco, "Images/OutputReco.png");
 
-	voOutput = __genePointCloud(pHeightReco, pFilledReco, core::PointCloudUtil::calcAABB(vInput), 2);
+	voOutput = __genePointCloud(pHeightReco, pFilledReco, core::PointCloudUtil::calcAABB(vInput), 50);
 	_EARLY_RETURN(!isPointCloudValid(voOutput), "DGI run error: output is not valid.", false);
 
 	bool r = __removeExcessPoints(vInput, voOutput);
@@ -58,7 +58,7 @@ ptr<core::CGradientMap> CDGI::__inpaintImage(const ptr<core::CGradientMap> vRaw,
 	cv::Mat ResultImage;
 
 	alg::CImageInpainting Inpainter;
-	bool r = Inpainter.run(GradientImage, MaskImage, ResultImage, alg::CV_TEALA);
+	bool r = Inpainter.run(GradientImage, MaskImage, ResultImage, alg::EInpaintMode::TEALA);
 	_EARLY_RETURN(!r, "DGI run error: image inpainting fails.", pFilled);
 
 	pFilled = std::get<1>(core::CMapWrapper::castCVMat2Map(ResultImage));

@@ -90,4 +90,35 @@ ptr<CHeightMap> MapUtil::resize(const ptr<CHeightMap> h, uint rx, uint ry) {
 	return pHeight;
 }
 
+float MapUtil::calcRMSE(const cv::Mat& a, cv::Mat& b) {
+	int Channels = a.channels();
+	int Rows = a.rows;
+	int Cols = a.cols * Channels;
+	float Sigma = 0.0;
+	float MSE = 0.0;
+	for (int i = 0; i < Rows; i++) {
+		for (int j = 0; j < Cols; j++) {
+			MSE += (a.ptr<uchar>(i)[j] - b.ptr<uchar>(i)[j]) * (a.ptr<uchar>(i)[j] - b.ptr<uchar>(i)[j]);
+		}
+	}
+	MSE = MSE / (Rows * Cols);
+	return MSE;
+}
 
+float core::MapUtil::calcPSNR(const cv::Mat& a, cv::Mat& b) {
+	int Channels = a.channels();
+	int Rows = a.rows;
+	int Cols = a.cols * Channels;
+
+	float Sigma = 0.0;
+	float MSE = 0.0;
+	float PSNR = 0.0;
+	for (int i = 0; i < Rows; i++) {
+		for (int j = 0; j < Cols; j++) {
+			Sigma += (a.ptr<uchar>(i)[j]) * (a.ptr<uchar>(i)[j]);
+			MSE += (a.ptr<uchar>(i)[j] - b.ptr<uchar>(i)[j]) * (a.ptr<uchar>(i)[j] - b.ptr<uchar>(i)[j]);
+		}
+	}
+	PSNR = 10 * log10(Sigma / MSE);
+	return PSNR;
+}

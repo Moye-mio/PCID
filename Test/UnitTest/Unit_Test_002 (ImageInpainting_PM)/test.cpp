@@ -86,9 +86,9 @@ TEST(PM, Gradient_CV_32FC2) {
 	}
 }
 
-TEST(PM, LoadImage_CV_8UC1) {
-	const std::string HoleImagePath = IMAGEINPAINTING_DIR + std::string("2/hole.png");
-	const std::string MaskImagePath = IMAGEINPAINTING_DIR + std::string("2/mask.png");
+TEST(PM, LoadImage_100) {
+	const std::string HoleImagePath = "Images/Test/1.png";
+	const std::string MaskImagePath = "Images/Test/1-mask.png";
 
 	cv::Mat Hole = cv::imread(HoleImagePath, CV_8UC1);
 	cv::Mat Mask = cv::imread(MaskImagePath, CV_8UC1);
@@ -98,7 +98,7 @@ TEST(PM, LoadImage_CV_8UC1) {
 	cv::inpaint(Hole, Mask, telea, 1.0, cv::INPAINT_TELEA);
 	pm = PM::run(Hole, Mask, 11);
 
-	cv::imwrite("ns.png", ns);
-	cv::imwrite("telea.png", telea);
-	cv::imwrite("pm.png", pm);
+	cv::imwrite("Images/Test/ns.png", ns);
+	cv::imwrite("Images/Test/telea.png", telea);
+	cv::imwrite("Images/Test/pm.png", pm);
 }

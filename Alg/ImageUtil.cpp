@@ -41,3 +41,118 @@ float ImageUtil::calcSSIM(const cv::Mat& a, const cv::Mat& b) {
 	float ssim = (mssim.val[0] + mssim.val[1] + mssim.val[2]) / 3;
 	return ssim;
 }
+
+bool ImageUtil::isEmptyInNeighbor(const cv::Mat& m, uint x, uint y) {
+	_EARLY_RETURN(x >= m.rows || y >= m.cols, "Index error", false);
+
+	if (x >= 1) {
+		if (m.at<uchar>(x - 1, y) == 1) {
+			return true;
+		}
+	}
+	if (y >= 1) {
+		if (m.at<uchar>(x, y - 1) == 1) {
+			return true;
+		}
+	}
+	if (x <= m.rows - 2) {
+		if (m.at<uchar>(x + 1, y) == 1) {
+			return true;
+		}
+	}
+	if (y <= m.cols - 2) {
+		if (m.at<uchar>(x, y + 1) == 1) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool ImageUtil::isImageValid(const cv::Mat& m) {
+	return !m.empty();
+}
+
+bool ImageUtil::isImageInpaintingInputValid(const cv::Mat& vSrc, const cv::Mat& vMask) {
+	_EARLY_RETURN(ImageUtil::isImageValid(vSrc) == false || ImageUtil::isImageValid(vMask) == false, "Input is invalid.", false);
+	_EARLY_RETURN(vSrc.rows != vMask.rows || vSrc.cols != vMask.cols, "Input size is not same.", false);
+	_EARLY_RETURN(vMask.type() != CV_8UC1, "Mask is not CV_8UC1.", false);
+	return true;
+}
+
+bool ImageUtil::saveToLocal(const cv::Mat& vSrc, const std::string& vPath, bool vIsNormalize) {
+	cv::Mat Save = vSrc.clone();
+
+	if (vIsNormalize) {
+		std::vector<cv::Mat> Channels;
+		cv::split(Save, Channels);
+		for (int i = 0; i < Channels.size(); i++) {
+			cv::Mat Reshape = Channels[i].reshape(1);
+			double MinValue, MaxValue;
+			cv::Point MinIdx, MaxIdx;
+			cv::minMaxLoc(Reshape, &MinValue, &MaxValue, &MinIdx, &MaxIdx);
+			double Span = MaxValue - MinValue;
+
+			std::cout << "Max: " << MaxValue << ", Min: " << MinValue << std::endl;
+
+			for (int m = 0; m < Channels[i].rows; m++) {
+				for (int n = 0; n < Channels[i].cols; n++) {
+					if (Channels[i].type() == CV_8UC1) {
+						Channels[i].at<uchar>(m, n) = ((double)Channels[i].at<uchar>(m, n) - MinValue) / Span * 255;
+					}
+					else if (Channels[i].type() == CV_32FC1) {
+						Channels[i].at<float>(m, n) = ((double)Channels[i].at<float>(m, n) - MinValue) / Span * 255;
+					}
+				}
+			}
+		}
+		cv::merge(Channels, Save);
+	}
+
+	if (Save.channels() == 1) {
+		cv::imwrite(vPath, Save);
+	}
+	else {
+		std::vector<cv::Mat> Channels;
+		cv::split(Save, Channels);
+		for (int i = 0; i < Channels.size(); i++) {
+			cv::imwrite(vPath + "-" + std::to_string(i) + ".png", Channels[i]);
+		}
+	}
+
+	return true;
+}
+
+bool ImageUtil::isIndexValid(const cv::Mat& m, int x, int y) {
+	if (x < 0 || y < 0 || x >= m.rows || y > m.cols) {
+		return false;
+	}
+
+	return true;
+}
+
+bool ImageUtil::isHoleBoundary(const cv::Mat& m, uint x, uint y, int d /* = 1 */) {
+	_EARLY_RETURN(x >= m.rows || y >= m.cols, "Index error", false);
+
+	if (m.at<uchar>(x, y) == 0) {
+		return false;
+	}
+
+	for (int i = (int)x - d; i <= (int)x + d; i++) {
+		for (int k = (int)y - d; k <= (int)y + d; k++) {
+			if (isIndexValid(m, i, k) == false) {
+				return true;
+			}
+
+			if (std::abs(i - (int)x) + std::abs(k - (int)y) > d) {
+				continue;
+			}
+
+			if (m.at<uchar>(i, k) == 0) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}

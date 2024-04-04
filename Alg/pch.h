@@ -25,6 +25,8 @@
 /* COMMON */
 #include "Common.h"
 
-
+/* ALG */
+#include "AlgCommon.h"
+#include "ImageUtil.h"
 
 #endif //PCH_H

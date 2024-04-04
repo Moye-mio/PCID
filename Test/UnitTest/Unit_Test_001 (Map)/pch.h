@@ -18,6 +18,9 @@
 /* BOOST */
 #include <boost/format.hpp>
 
+/* CV */
+#include <opencv2/opencv.hpp>
+
 /* COMMON */
 #include "Common.h"
 

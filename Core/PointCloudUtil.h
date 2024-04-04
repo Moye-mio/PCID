@@ -16,6 +16,7 @@ public:
 	static void normalize(const PC_t::Ptr vioCloud);
 	static void normalizeByFixScale(const PC_t::Ptr vioCloud, float vScale = 1.0f);
 	static void normalizeByReference(const PC_t::Ptr vioCloud, const PC_t::Ptr vRefer);
+	static void scale(const PC_t::Ptr vioCloud, float vScale = 1.0f);
 	static void extractXYZpt(const PC_t::Ptr& vCloud, const PT_t::Ptr& voPts);
 };
 

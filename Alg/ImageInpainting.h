@@ -1,12 +1,8 @@
 #pragma once
 
-namespace alg {
+#include "AlgCommon.h"
 
-enum EInpaintMode {
-	CV_NS,
-	CV_TEALA,
-	PM,
-};
+namespace alg {
 
 class CImageInpainting {
 public:
@@ -17,6 +13,7 @@ public:
 
 private:
 	void __inpaintByOpenCV(const cv::Mat& vSrc, const cv::Mat& vMask, cv::Mat& voRes, int vFlag);
+	void __inpaintByMix(const cv::Mat& vSrc, const cv::Mat& vMask, cv::Mat& voRes);
 
 };
 

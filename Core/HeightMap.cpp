@@ -53,6 +53,21 @@ float CHeightMap::bisample(float i, float k) {		/* 0 < i, k < width, height */
 	return r;
 }
 
+float core::CHeightMap::bisample2(float i, float k) {		/* 0 < i, k < 1, 1 */
+	float x = i * m_Width - 0.5f;
+	float y = k * m_Height - 0.5f;
+
+	float v1 = m_Data[int(x)][int(y)];
+	float v2 = m_Data[int(x) + 1][int(y)];
+	float v3 = m_Data[int(x)][int(y) + 1];
+	float v4 = m_Data[int(x) + 1][int(y) + 1];
+
+	float x1 = x - int(x);
+	float y1 = y - int(y);
+
+	return MathUtil::bilinearInterpolate(v1, v2, v3, v4, x1, y1);
+}
+
 std::pair<uint, uint> CHeightMap::getMaxId() const {
 	float Tmax = -FLT_MAX;
 	int m = 0, n = 0;

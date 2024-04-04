@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <variant>
 #include <numbers>
+#include <chrono>
 
 /* CV */
 #include <opencv2/opencv.hpp>
@@ -51,8 +52,9 @@
 #include "ProjManager.h"
 
 /* PATCHMATCH */
+#include "AlgCommon.h"
 #include "ImageInpainting.h"
 #include "ImageUtil.h"
-
+#include "PoissonImageInpainting.h"
 
 #endif //PCH_H

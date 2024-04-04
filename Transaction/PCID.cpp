@@ -1,6 +1,18 @@
 #include "pch.h"
 #include "PCID.h"
 
+CPCID::CPCID()
+	: m_WorkRes(128)
+	, m_RecoRes(256)
+{}
+
+bool CPCID::setFitPara(uint d, uint r, uint it) {
+	m_Degree = d;
+	m_RefineMent = r;
+	m_Iter = it;
+	return true;
+}
+
 bool CPCID::setResolution(uint vWorkRes, uint vRecoRes) {
 	_EARLY_RETURN(vWorkRes * vRecoRes == 0, "PCID set res error: res == 0.", false);
 
@@ -15,7 +27,13 @@ bool CPCID::run(const PC_t::Ptr vInput, const PC_t::Ptr vSub, PC_t::Ptr& voOutpu
 	core::CNurbsFitting Fitting;
 	Fitting.setCVSavePath("ControlPts/pts.txt");
 	Fitting.setKnotSavePath("ControlPts/knots.txt");
-	bool r = Fitting.run(vSub, 3, 5, 1);
+
+	auto Time1 = std::chrono::steady_clock::now();
+	bool r = Fitting.run(vSub, m_Degree, m_RefineMent, m_Iter);
+	auto Time2 = std::chrono::steady_clock::now();
+	double TimeSpan = std::chrono::duration<double, std::milli>(Time2 - Time1).count();
+	std::cout << "Fitting use time: " << TimeSpan << "ms" << std::endl;
+	
 	const auto Fit = Fitting.getFit();
 	_EARLY_RETURN(!r || !Fit, "PCID error: fitting nurbs fails.", false);
 
@@ -35,7 +53,7 @@ bool CPCID::run(const PC_t::Ptr vInput, const PC_t::Ptr vSub, PC_t::Ptr& voOutpu
 	_EARLY_RETURN(!pHeight->isValid(), "PCID error: height map is not valid.", false);
 	std::cout << "HeightMap max: " << pHeight->getMax() << ", min: " << pHeight->getMin() << std::endl;
 
-	int DenoiseThres = 10;
+	int DenoiseThres = 20;
 	ptr<core::CHeightMap> pHeightCopy = pHeight;
 	pHeight = __denoiseHeightMap(pHeight, DenoiseThres);
 	_EARLY_RETURN(!pHeight->isValid(), "PCID error: height map is not valid.", false);
@@ -44,7 +62,8 @@ bool CPCID::run(const PC_t::Ptr vInput, const PC_t::Ptr vSub, PC_t::Ptr& voOutpu
 
 	core::CMapWrapper::saveMapToLocal(pHeight, "Images/Input.png");
 
-	ptr<core::CGradientMap> pGradient = core::MapUtil::geneGradient(pHeight);
+	/* Old pipeline */
+	/*ptr<core::CGradientMap> pGradient = core::MapUtil::geneGradient(pHeight);
 	_EARLY_RETURN(!pGradient->isValid(), "PCID error: gradient map is not valid.", false);
 
 	ptr<core::CMaskMap> pMask = core::MapUtil::geneMask<vec2f>(pGradient);
@@ -56,7 +75,10 @@ bool CPCID::run(const PC_t::Ptr vInput, const PC_t::Ptr vSub, PC_t::Ptr& voOutpu
 	ptr<core::CGradientMap> pGog = core::MapUtil::geneGradient(pGradientFilled);
 	_EARLY_RETURN(!pGog->isValid(), "PCID error: gog map is not valid.", false);
 
-	ptr<core::CHeightMap> pHeightFilled = __solveEquations(pHeight, pGradientFilled, pGog);
+	ptr<core::CHeightMap> pHeightFilled = __solveEquations(pHeight, pGradientFilled, pGog);*/
+
+	ptr<core::CMaskMap> pHeightMask = core::MapUtil::geneMask<float>(pHeight);
+	ptr<core::CHeightMap> pHeightFilled = __inpaintImageByPoisson(pHeight, pHeightMask);
 	_EARLY_RETURN(!pHeightFilled->isValid() || !pHeightFilled->isNoEmpty(), "PCID error: height filled map is not valid.", false);
 	__recoverHeightMap(pHeightFilled, pHeightCopy);
 	pHeightFilled = pHeightCopy;
@@ -70,7 +92,7 @@ bool CPCID::run(const PC_t::Ptr vInput, const PC_t::Ptr vSub, PC_t::Ptr& voOutpu
 	_EARLY_RETURN(!pFilledReco->isValid(), "PCID error: FilledReco map is not valid.", false);
 	core::CMapWrapper::saveMapToLocal(pFilledReco, "Images/OutputReco.png");
 
-	voOutput = __genePointCloud(Fit, pHeightReco, pFilledReco, core::PointCloudUtil::calcAABB(vInput), 2);
+	voOutput = __genePointCloud(Fit, pHeightReco, pFilledReco, core::PointCloudUtil::calcAABB(vInput), 10);
 	_EARLY_RETURN(!isPointCloudValid(voOutput), "PCID error: output is not valid.", false);
 
 	r = __removeExcessPoints(vInput, voOutput);
@@ -103,13 +125,24 @@ ptr<core::CGradientMap> CPCID::__inpaintImage(const ptr<core::CGradientMap> vRaw
 	cv::Mat ResultImage;
 
 	alg::CImageInpainting Inpainter;
-	bool r = Inpainter.run(GradientImage, MaskImage, ResultImage, alg::PM);
+	bool r = Inpainter.run(GradientImage, MaskImage, ResultImage, alg::EInpaintMode::PM);
 	_EARLY_RETURN(!r, "PCID error: image inpainting fails.", pFilled);
 
 	pFilled = std::get<1>(core::CMapWrapper::castCVMat2Map(ResultImage));
 	_EARLY_RETURN(!pFilled->isValid(), "PCID error: cast cv mat 2 map fails.", pFilled);
 
 	return pFilled;
+}
+
+ptr<core::CHeightMap> CPCID::__inpaintImageByPoisson(const ptr<core::CHeightMap> vRaw, const ptr<core::CMaskMap> vMask) {
+	cv::Mat Raw = core::CMapWrapper::castMap2CVMat<float>(vRaw);
+	cv::Mat Mask = core::CMapWrapper::castMap2CVMat<uchar>(vMask);
+	cv::Mat Res;
+
+	alg::CPoissonImageInpainting Inpainter;
+	Inpainter.run(Raw, Mask, Res, alg::EPoissonGradient::MIX);
+
+	return std::get<0>(core::CMapWrapper::castCVMat2Map(Res));
 }
 
 ptr<core::CHeightMap> CPCID::__solveEquations(const ptr<core::CHeightMap> vInput, const ptr<core::CGradientMap> vGradientFilled, const ptr<core::CGradientMap> vGog) {
@@ -202,7 +235,7 @@ void CPCID::__recoverHeightMap(const ptr<core::CHeightMap> vRawHeightMap, ptr<co
 	cv::Mat CompleteImage;
 
 	alg::CImageInpainting Inpainter;
-	bool r = Inpainter.run(PartialImage, MaskImage, CompleteImage, alg::CV_TEALA);
+	bool r = Inpainter.run(PartialImage, MaskImage, CompleteImage, alg::EInpaintMode::TEALA);
 	_EARLY_RETURN(!r, "PCID error: partial image inpainting fails.", );
 
 	vioFilledHeightMap = std::get<0>(core::CMapWrapper::castCVMat2Map(CompleteImage));

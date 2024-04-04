@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ImageInpainting.h"
+#include "ImageUtil.h"
 #include "PMInterface.h"
 
 using namespace alg;
@@ -8,14 +9,17 @@ bool CImageInpainting::run(const cv::Mat& vSrc, const cv::Mat& vMask, cv::Mat& v
 	_EARLY_RETURN(vSrc.size() != vMask.size(), "image inpainting error: src and mask is not the same size.", false);
 
 	switch (vMode) {
-	case CV_TEALA:
-		__inpaintByOpenCV(vSrc, vMask, voRes, CV_TEALA);
+	case EInpaintMode::TEALA:
+		__inpaintByOpenCV(vSrc, vMask, voRes, cv::INPAINT_TELEA);
 		break;
-	case CV_NS:
-		__inpaintByOpenCV(vSrc, vMask, voRes, CV_NS);
+	case EInpaintMode::NS:
+		__inpaintByOpenCV(vSrc, vMask, voRes, cv::INPAINT_NS);
 		break;
-	case PM:
+	case EInpaintMode::PM:
 		voRes = PM::run(vSrc, vMask);
+		break;
+	case EInpaintMode::Mix:
+		__inpaintByMix(vSrc, vMask, voRes);
 		break;
 	default:
 		break;
@@ -25,7 +29,7 @@ bool CImageInpainting::run(const cv::Mat& vSrc, const cv::Mat& vMask, cv::Mat& v
 
 }
 
-void alg::CImageInpainting::__inpaintByOpenCV(const cv::Mat& vSrc, const cv::Mat& vMask, cv::Mat& voRes, int vFlag) {
+void CImageInpainting::__inpaintByOpenCV(const cv::Mat& vSrc, const cv::Mat& vMask, cv::Mat& voRes, int vFlag) {
 	std::vector<cv::Mat> ChannelImages, ChannelInpainteds;
 	cv::split(vSrc, ChannelImages);
 
@@ -59,5 +63,27 @@ void alg::CImageInpainting::__inpaintByOpenCV(const cv::Mat& vSrc, const cv::Mat
 	}
 
 	cv::merge(ChannelInpainteds, voRes);
+}
+
+void CImageInpainting::__inpaintByMix(const cv::Mat& vSrc, const cv::Mat& vMask, cv::Mat& voRes) {
+	voRes = PM::run(vSrc, vMask);
+	cv::Mat CVRes;
+	cv::inpaint(vSrc, vMask, CVRes, 1.0, cv::INPAINT_TELEA);
+
+	cv::imwrite("Images/pmres.png", voRes);
+	cv::imwrite("Images/cvres.png", CVRes);
+
+	for (int i = 0; i < vMask.rows; i++) {
+		for (int k = 0; k < vMask.cols; k++) {
+			if (ImageUtil::isHoleBoundary(vMask, i, k, 2)) {
+				if (vSrc.type() == 5) {
+					voRes.at<float>(i, k) = CVRes.at<float>(i, k);
+				}
+				else if (vSrc.type() == 0) {
+					voRes.at<uchar>(i, k) = CVRes.at<uchar>(i, k);
+				}
+			}
+		}
+	}
 }
 

@@ -51,7 +51,6 @@ protected:
 	}
 };
 
-
 TEST_F(TestSetUpSolver, DT_MismatchingMaps) {
 	Eigen::Matrix<float, 3, 4> Mat;
 	Mat << 0, 0, 0, 0,
@@ -115,4 +114,3 @@ TEST_F(TestSetUpSolver, NT_AllUnknowns) {
 	for (int i = 0; i < Unknowns.size(); i++)
 		ASSERT_EQ(Unknowns[i], GTUnknowns[i]);
 }
-

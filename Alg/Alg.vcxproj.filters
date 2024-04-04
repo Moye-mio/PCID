@@ -10,6 +10,27 @@
     <Filter Include="ImageInpainting">
       <UniqueIdentifier>{74159c01-e265-43cc-8e65-ed73762ae4e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PE">
+      <UniqueIdentifier>{00fb2612-d09e-486e-a800-a24df6215042}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{66475057-b73b-403c-88db-94e87a84130f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mix">
+      <UniqueIdentifier>{3124c24e-e34b-4639-b4aa-0e075c726820}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CV">
+      <UniqueIdentifier>{1d7ec514-ce28-404a-8e8f-14a412aa8906}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{65537dab-045e-45a7-88f0-a1e041d7b5fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Examplar-based">
+      <UniqueIdentifier>{11c4015f-94d8-4b5d-ad5c-94aec61873b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GlobalBest">
+      <UniqueIdentifier>{e87f5de1-2672-48b8-bf73-15faef78c4f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -33,8 +54,20 @@
     <ClInclude Include="ImageInpainting.h">
       <Filter>ImageInpainting</Filter>
     </ClInclude>
+    <ClInclude Include="PoissonImageInpainting.h">
+      <Filter>PE</Filter>
+    </ClInclude>
     <ClInclude Include="ImageUtil.h">
-      <Filter>ImageInpainting</Filter>
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="MixInpainting.h">
+      <Filter>Mix</Filter>
+    </ClInclude>
+    <ClInclude Include="CVInpainting.h">
+      <Filter>CV</Filter>
+    </ClInclude>
+    <ClInclude Include="AlgCommon.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -56,8 +89,17 @@
     <ClCompile Include="ImageInpainting.cpp">
       <Filter>ImageInpainting</Filter>
     </ClCompile>
+    <ClCompile Include="PoissonImageInpainting.cpp">
+      <Filter>PE</Filter>
+    </ClCompile>
     <ClCompile Include="ImageUtil.cpp">
-      <Filter>ImageInpainting</Filter>
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="MixInpainting.cpp">
+      <Filter>Mix</Filter>
+    </ClCompile>
+    <ClCompile Include="CVInpainting.cpp">
+      <Filter>CV</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

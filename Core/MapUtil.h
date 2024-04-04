@@ -24,6 +24,9 @@ public:
 	static ptr<CHeightMap> getHeightMapFromGradientMap(const ptr<CGradientMap> g, uint axis);
 	static ptr<CHeightMap> resize(const ptr<CHeightMap> h, uint rx, uint ry);
 
+	static float calcRMSE(const cv::Mat& a, cv::Mat& b);
+	static float calcPSNR(const cv::Mat& a, cv::Mat& b);
+
 private:
 
 };
