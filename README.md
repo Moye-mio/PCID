@@ -16,7 +16,7 @@ Windows 10 or newer
 
 You can use C++ package management tools such as [vcpkg](https://vcpkg.io/en/) and [nuget](https://www.nuget.org/) to quickly install dependencies.
 
-If you already have vcpkg installed and the path of your vcpkg.exe is ```C:\vcpkg\vcpkg.exe```, then you can run ```install.bat``` directly, otherwise you can install the dependency manually by following the steps below:
+If you already have vcpkg installed and the path of your vcpkg.exe is ```C:\vcpkg\vcpkg.exe```, then you can run ```install-3rd-parties.bat``` directly, otherwise you can install the dependency manually by following the steps below:
 
 1. Open powershell or cmd in the vcpkg folder and enter the following command to integrate vcpkg into all visual studio projects:
 
@@ -35,5 +35,5 @@ vcpkg install pcl[surface-on-nurbs]:x64-windows
 
 # Run
 
-If your visual studio 2022 (Community) uses the default installation path, which is ```C:\Program Files\Microsoft Visual Studio\2022\Community\```, you can run ```install.bat``` directly, and the inpainted point cloud file will be generated in the folder ```Result``` after the program runs.
+If your visual studio 2022 (Community) uses the default installation path, which is ```C:\Program Files\Microsoft Visual Studio\2022\Community\```, you can run ```clean&build&run-sample.bat``` directly, and the inpainted point cloud file will be generated in the folder ```Result``` after the program runs.
 
