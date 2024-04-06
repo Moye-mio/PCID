@@ -65,9 +65,6 @@ int main() {
 
 	std::vector<std::string> FileIndices;
 	FileIndices.push_back("1");
-	//FileIndices.push_back("2");
-	//FileIndices.push_back("3");
-	//FileIndices.push_back("6");
 
 	for (const std::string& Id : FileIndices) {
 		if (Id == "6") {
