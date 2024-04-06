@@ -37,11 +37,13 @@ bld/
 [Mm]odel/
 [Mm]odels/
 [Tt]est/**/*.ply
+[Tt]est/**/*.png
 [Ee]xperiment/**/*.ply
+[Ee]xperiment/**/*.png
+[Pp]ythonScripts/**/*.png
 
 *.pcd
 *.bmp
-*.png
 *.jpg
 *.txt
 *.log
