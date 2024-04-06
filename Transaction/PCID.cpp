@@ -140,7 +140,7 @@ ptr<core::CHeightMap> CPCID::__inpaintImageByPoisson(const ptr<core::CHeightMap>
 	cv::Mat Res;
 
 	alg::CPoissonImageInpainting Inpainter;
-	Inpainter.run(Raw, Mask, Res, alg::EPoissonGradient::PM);
+	Inpainter.run(Raw, Mask, Res, alg::EPoissonGradient::MIX);
 
 	return std::get<0>(core::CMapWrapper::castCVMat2Map(Res));
 }

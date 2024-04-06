@@ -36,7 +36,9 @@ bld/
 # Models
 [Mm]odel/
 [Mm]odels/
-*.ply
+[Tt]est/**/*.ply
+[Ee]xperiment/**/*.ply
+
 *.pcd
 *.bmp
 *.png
