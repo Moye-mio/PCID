@@ -37,3 +37,7 @@ vcpkg install pcl[surface-on-nurbs]:x64-windows
 
 If your visual studio 2022 (Community) uses the default installation path, which is ```C:\Program Files\Microsoft Visual Studio\2022\Community\```, you can run ```clean&build&run-sample.bat``` directly, and the inpainted point cloud file will be generated in the folder ```Result``` after the program runs.
 
+# Result description
+
+The output of this code is a binary point cloud file in ```ply``` format, which can be visualized by third-party software such as cloudcompare according to your needs.
+
